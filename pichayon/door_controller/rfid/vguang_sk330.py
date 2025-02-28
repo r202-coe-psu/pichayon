@@ -106,6 +106,8 @@ class RS485Reader(readers.Reader):
         while self.running:
             data = await self.reader.read(1)
             await self.read_queue.put(ord(data))
+            # await asyncio.sleep(0)
+           
 
     async def calculate_check_byte(self, data):
         check_byte = data[0]
@@ -120,7 +122,11 @@ class RS485Reader(readers.Reader):
         buffer_index = 1
         while self.running:
             data = await self.read_queue.get()
-            # print("got->", f"{data:02X}")
+            # logger.debug(f"got-> {data=}")
+
+            if data == 0x55:
+                data_buffer = data_buffer.clear()
+
             data_buffer.append(data)
 
             while data_buffer and data_buffer[0] != 0x55:
