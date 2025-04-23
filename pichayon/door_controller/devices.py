@@ -82,12 +82,10 @@ class Device:
         self.door_id = data.get("door_id", "")
 
         self.door_config["begin_access_time"] = datetime.datetime.strptime(
-            data.get("begin_access_time", 
-
-                    "00:00"), "%H:%M"
+            data.get("begin_access_time", "00:00"), "%H:%M"
         ).time()
         self.door_config["end_access_time"] = datetime.datetime.strptime(
-                data.get("end_access_time", "00:00"), "%H:%M"
+            data.get("end_access_time", "00:00"), "%H:%M"
         ).time()
 
         if data.get("end_access_time") != "00:00":
@@ -202,14 +200,11 @@ class Device:
         current_time = datetime.datetime.now().time()
         # logger.debug(f'{current_time} {self.door_config["begin_access_time"]} - {self.door_config["end_access_time"]}')
         if (
- (
             current_time >= self.door_config["begin_access_time"]
             and current_time <= self.door_config["end_access_time"]
-            )
-            or
-            self.door_config["begin_access_time"]
-            == self.door_config["end_access_time"]
-                   ):
+        ) or self.door_config["begin_access_time"] == self.door_config[
+            "end_access_time"
+        ]:
             return True
 
         return False
