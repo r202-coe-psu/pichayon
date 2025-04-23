@@ -304,8 +304,7 @@ class DoorControllerServer:
 
                     aes_crypto = crypto.AESCrypto(self.device_id)
                     self.key_types = eval(aes_crypto.decrypt(ciphertext))
-
-                    self.device.key_types.update(self.key_types)
+                    await self.device.set_key_types(self.key_types)
 
                     self.cc_id = await self.nc.subscribe(
                         f"pichayon.door_controller.{self.device_id}",

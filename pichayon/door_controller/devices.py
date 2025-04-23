@@ -50,6 +50,11 @@ class Device:
             return vguang_sk330.RS485Reader(key_types, self.door_config, "/dev/ttyS0")
 
         return None
+    
+    async def set_key_types(self, key_types):
+        self.key_types = key_types
+        if  self.rfid and hasattr( self.rfid, "key_types"):
+            await self.rfid.key_types=key_types
 
     async def set_log_manager(self, log_manager):
         self.log_manager = log_manager
