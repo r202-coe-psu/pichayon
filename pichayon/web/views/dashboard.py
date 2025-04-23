@@ -12,6 +12,7 @@ from flask_login import login_required, current_user
 from pichayon import models
 import json
 import datetime
+import traceback
 from pichayon.web import pichayon_client
 
 import ipaddress
@@ -51,6 +52,7 @@ def index():
                 )
                 door_states[door.id] = response["door"]["state"]
             except Exception as e:
+                print(traceback.format_exc())
                 door_states[door.id] = "Unknow"
 
     doors.sort(key=lambda d: d.name)

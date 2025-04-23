@@ -88,7 +88,7 @@
       {% for member in members | sort(attribute='user.username') %}
       <tr>
         <td>{{ member.user.username }}</td>
-	<td>{{ member.user.first_name }} {{ member.user.last_name}}</td>
+	      <td>{{ member.user.first_name }} {{ member.user.last_name}}</td>
         <td>{{ member.role }}</td>
         <td>{{ member.started_date.ctime() }}</td>
         <td>{{ member.expired_date.ctime() if member.expired_date else '' }}</td>

@@ -142,8 +142,12 @@ def delete_member(user_group_id, member_id):
     member = models.UserGroupMember.objects(id=member_id).first()
     user = member.user
 
-    if member:
-        member.delete()
+    if not member:
+        return redirect(
+            url_for("administration.user_groups.view", user_group_id=user_group_id)
+        )
+
+    member.delete()
 
     data = json.dumps(
         {

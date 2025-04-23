@@ -1,5 +1,6 @@
 from pichayon.utils import program_options
 from pichayon import web
+from livereload import Server
 
 
 def main():
@@ -9,4 +10,16 @@ def main():
 
     program_options.initial_profile(app, options)
 
-    app.run(debug=options.debug, host=options.host, port=int(options.port))
+    app.debug = options.debug
+
+    server = Server(app.wsgi_app)
+    server.watch("pichayon/web")
+    server.serve(
+        debug=options.debug,
+        host=options.host,
+        port=int(options.port),
+        restart_delay=2,
+        # open_url_delay=5,
+    )
+
+    # app.run(debug=options.debug, host=options.host, port=int(options.port))
