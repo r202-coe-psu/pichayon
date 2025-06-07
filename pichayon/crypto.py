@@ -22,16 +22,16 @@ class AESCrypto:
         padded_message = pad(message.encode("utf-8"), AES.block_size)
         ciphertext_bytes = cipher.encrypt(padded_message)
         ciphertext = base64.b64encode(iv + ciphertext_bytes).decode("utf-8")
-        
+
         return ciphertext
 
     def decrypt(self, encode_text):
         cipher_text = base64.b64decode(encode_text)
         iv = cipher_text[:16]
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        decrypted_bytes =  cipher.decrypt(cipher_text[16:])
+        decrypted_bytes = cipher.decrypt(cipher_text[16:])
         plaintext_bytes = unpad(decrypted_bytes, AES.block_size)
-        plaintext =  plaintext_bytes.decode('utf-8').strip()
+        plaintext = plaintext_bytes.decode("utf-8").strip()
 
         return plaintext
 
