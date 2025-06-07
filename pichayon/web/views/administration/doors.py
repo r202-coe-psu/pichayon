@@ -40,8 +40,8 @@ def create_or_edit(door_id):
                 form.begin_access_time.data = door.begin_access_time.time()
                 form.end_access_time.data = door.end_access_time.time()
             else:
-                form.begin_access_time.data = "00:00"
-                form.end_access_time.data = "00:00"
+                form.begin_access_time.data = datetime.time()
+                form.end_access_time.data = datetime.time()
 
         return render_template(
             "/administration/doors/create-edit.html",

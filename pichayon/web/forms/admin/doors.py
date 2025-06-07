@@ -4,6 +4,8 @@ from flask_wtf import FlaskForm
 from flask_mongoengine.wtf import model_form
 from pichayon import models
 
+import datetime
+
 BaseDoorForm = model_form(
     models.Door,
     FlaskForm,
@@ -36,11 +38,13 @@ class DoorForm(BaseDoorForm):
     begin_access_time = fields.TimeField(
         "Begin allow access time",
         format="%H:%M",
+        default=datetime.time(),
         widget=widgets.TextInput(),
     )
     end_access_time = fields.TimeField(
         "End allow access time",
         format="%H:%M",
+        default=datetime.time(),
         widget=widgets.TextInput(),
     )
 
