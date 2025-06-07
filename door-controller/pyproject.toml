@@ -15,6 +15,7 @@ tinydb = "^4.8.0"
 tinydb-serialization = "^2.1.0"
 flask = "^2.3.2"
 pyserial-asyncio-fast = "^0.16"
+pycryptodome = "^3.23.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
