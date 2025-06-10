@@ -22,6 +22,7 @@ class Device:
         self.door_closed_pin = 15
         self.switch_pin = 16
         self.relay_pin = 18
+
         self.is_relay_active_high = settings.get(
             "PICHAYON_DOOR_RELAY_ACTIVE_HIGH", True
         )
