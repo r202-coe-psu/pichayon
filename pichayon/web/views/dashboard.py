@@ -122,6 +122,6 @@ def open_door():
     )
 
     response = Response()
-    response.data = json.dumps({"status": "success", "door_id": door.id})
+    response.data = json.dumps({"status": "success", "door_id": str(door.id)})
     response.status_code = 200
     return response
