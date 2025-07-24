@@ -7,6 +7,7 @@ from flask import (
     redirect,
     g,
     current_app,
+    abort,
 )
 from flask_login import login_required, current_user
 from pichayon import models
@@ -35,14 +36,16 @@ def index():
 
     door_groups = [ga.door_group for ga in group_auths]
 
-    doors = []
+    member_doors = []
     for door_group in door_groups:
-        doors.extend(door_group.doors)
+        member_doors.extend(door_group.doors)
 
     door_states = dict()
-    doors = list(set(doors))
+    member_doors = list(set(member_doors))
+    doors = models.Door.objects(id__in=[d.id for d in member_doors])
 
     for door in doors:
+
         if door.device_type == "pichayon":
             door_states[door.id] = door.get_state()
         elif door.device_type == "sparkbit":
@@ -55,7 +58,7 @@ def index():
                 print(traceback.format_exc())
                 door_states[door.id] = "Unknow"
 
-    doors.sort(key=lambda d: d.name)
+    doors.order_by("+name")
 
     return render_template(
         "/dashboard/index.html",
@@ -64,11 +67,11 @@ def index():
         doors=doors,
         door_states=door_states,
         datetime=datetime,
+        is_ip_allowed=is_ip_allowed(),
     )
 
 
-# @app.before_request
-def limit_remote_addr():
+def is_ip_allowed():
     allow_ips = current_app.config.get("PICHAYON_WEB_ALLOW_IPS")
     ip = request.headers.get("X-Forwarded-For", request.remote_addr)
 
@@ -82,11 +85,19 @@ def limit_remote_addr():
     for allow_ip in allow_ips:
         if ipaddress.ip_address(ip) in ipaddress.ip_network(allow_ip):
             is_allow = True
-            break
 
     if not is_allow:
-        # abort(503)
-        abort(Response("Please, connect to allowed WiFi"))
+        return False
+
+    return True
+
+
+# @app.before_request
+def get_remote_addr():
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+
+    if "," in ip:
+        ip = ip.split(",")[0].strip()
 
     return ip
 
@@ -94,7 +105,11 @@ def limit_remote_addr():
 @module.route("/open_door", methods=("GET", "POST"))
 @login_required
 def open_door():
-    ip = limit_remote_addr()
+    ip = get_remote_addr()
+    if not is_ip_allowed():
+        response = Response(text="IP not allowed", mimetype="text/plain")
+        response.status_code = 403
+        return response
 
     door_id = request.form.get("door_id")
     # user_group_id = request.form.get('user_group_id')
@@ -107,5 +122,6 @@ def open_door():
     )
 
     response = Response()
+    response.data = json.dumps({"status": "success", "door_id": door.id})
     response.status_code = 200
     return response

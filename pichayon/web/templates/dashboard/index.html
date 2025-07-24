@@ -14,63 +14,72 @@
                             or door.end_access_time.time() == door.begin_access_time.time()
                             %}
 
-          <div class="header">
-            {% if 'closed' == door_state %}
-              <i class="door closed icon green"></i>
-            {% elif 'opened' == door_state %}
-              <i class="door open icon red"></i>
-            {% else %}  
-              <i class="door closed icon"></i>
-            {% endif %}
-            {{ door.name | upper }}
-          </div>
+        <div class="header">
+          {% if 'closed' == door_state %}
+          <i class="door closed icon green"></i>
+          {% elif 'opened' == door_state %}
+          <i class="door open icon red"></i>
+          {% else %}
+          <i class="door closed icon"></i>
+          {% endif %}
+          {{ door.name | upper }}
+        </div>
 
-          <div class="meta">
-            {{ door.device_type | title }} | {{ door_states[door.id] }}
-          </div>
+        <div class="meta">
+          {{ door.device_type | title }} | {{ door_states[door.id] }}
+        </div>
 
-          {% if 'admin' in current_user.roles %}
-          <div style="position: absolute; right: 0;">
+        {% if 'admin' in current_user.roles %}
+        <div style="position: absolute; right: 0;">
           {#
           <a href="{{url_for('administration.door_authorizations.index', group_id=door_group.id)}}"><i class="circular inverted green eye icon"></i></a>
           #}
-          
-          <a href="{{ url_for('administration.history_logs.door_logs', door_id=door.id) }}"><i class="circular inverted blue history icon"></i></a>
-          
-          </div>
-          {% endif %}
+
+          <a href="{{ url_for('administration.history_logs.door_logs', door_id=door.id) }}"><i
+              class="circular inverted blue history icon"></i></a>
+
+        </div>
+        {% endif %}
         {#
         <!-- <div class="description">-->
         <!--   Elliot requested permission to view your contact details-->
         <!-- </div>-->
         #}
-        </div>
-        <div class="extra content">
-          {% if door.have_passcode %}
-            <div>
-              Passcode: {{ current_user.passcode }}
-              {#% if user_group[door_group.id].is_supervisor(current_user) %}
+      </div>
+      <div class="extra content">
+        {% if door.have_passcode %}
+        <div>
+          Passcode: {{ current_user.passcode }}
+          {#% if user_group[door_group.id].is_supervisor(current_user) %}
               <a href="{{url_for('administration.doors.revoke_passcode', door_id=door.id)}}"><i class="redo icon"></i></a>
               {% endif %#}
-            </div>
-          {% endif %}
-          {% if not door.is_web_open %}
-            <div class="opendoor ui two buttons">
-              <div class="ui basic disabled button">Opening via Web was disabled</div>
-            </div>
-          {% elif not can_access_door and not current_user.has_roles('admin', 'lecturer', 'staff') %}
-            <div class="opendoor ui two buttons">
-              <div class="ui gray disabled button">Opening via Web was disabled in this time</div>
-            </div>
-          {% else%}
-            <div class="opendoor ui two buttons">
-              <div id="{{ door.id }}" class="ui green button">Open</div>
-            </div>
-          {% endif %}
         </div>
+        {% endif %}
+        {% if not is_ip_allowed %}
+        <div class="opendoor ui two buttons">
+          <div class="ui basic disabled button" id="{{ door.id }}">Connect Allowed Network</div>
+        </div>
+        {% elif not door.is_web_open %}
+        <div class="opendoor ui two buttons">
+          <div class="ui basic disabled button" id="{{ door.id }}">Opening via Web was disabled</div>
+        </div>
+        {% elif not can_access_door and not current_user.has_roles('admin', 'lecturer', 'staff') %}
+        <div class="opendoor ui two buttons">
+          <div class="ui gray disabled button" id="{{ door.id }}">Opening via Web was disabled in this time</div>
+        </div>
+        {% else%}
+        <div class="opendoor ui two buttons">
+          <div id="{{ door.id }}" class="ui green button">Open</div>
+        </div>
+        {% endif %}
       </div>
+    </div>
     {% endfor %}
   </div>
 </div>
-<script type="text/python" src="{{ url_for('static', filename='brython/controller.py') }}"></script>
+
+
+<script type="text/python" src="{{ url_for('static', filename='bry/controller.py') }}"></script>
+
+
 {% endblock %}

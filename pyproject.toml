@@ -6,7 +6,7 @@ authors = ["Thanathip Limna <boatkrap@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.13"
 wheel = "^0.38.4"
 nats-py = "^2.2.0"
 flask = "^3.1.0"
@@ -14,13 +14,14 @@ flask-login = "^0.6.2"
 authlib = "^1.5.2"
 python-dateutil = "^2.8.2"
 requests = "^2.28.1"
-brython = "^3.11.0"
+brython = "^3.13.2"
 cloudant = "^2.15.0"
 gunicorn = "^20.1.0"
 flask-wtf = "^1.2.2"
 wtforms = "^3.0.1"
 pycryptodome = "^3.19.0"
 flask-mongoengine-3 = "^1.1.0"
+watchdog = "^6.0.0"
 
 
 [tool.poetry.group.dev.dependencies]

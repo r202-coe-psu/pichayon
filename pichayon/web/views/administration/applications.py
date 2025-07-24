@@ -161,7 +161,10 @@ def add_or_edit_user_to_user_group(application_id):
 
         application.save()
 
-        pichayon_client.update_member(application.user)
+        try:
+            pichayon_client.update_member(application.user)
+        except Exception as e:
+            print(f"Error updating member {application.user.id}: {e}")
 
     return redirect(url_for("administration.applications.index"))
 

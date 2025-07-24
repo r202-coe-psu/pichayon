@@ -1,27 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-    <title>{% block title  %}{{ config.get('APP_TITLE') }}{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='node_modules/fomantic-ui-css/semantic.min.css') | add_date_url}}">
-    <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') | add_date_url}}"></script>
-    <script src="{{ url_for('static', filename='node_modules/fomantic-ui-css/semantic.min.js') | add_date_url}}"></script>
-    <script src="{{ url_for('static', filename='node_modules/brython/brython.js') | add_date_url}}"></script>
-    <script src="{{ url_for('static', filename='node_modules/brython/brython_stdlib.js') | add_date_url}}"></script>
 
-    <style type="text/css">
-      body {
-        background-color: #DADADA;
-      }
-    </style>
-    
-    {% block default_head %}{% endblock %}
-    {% block additional_head %}{% endblock %}
-  </head>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+  <title>{% block title  %}{{ config.get('APP_TITLE') }}{% endblock %}</title>
+  <link rel="stylesheet"
+    href="{{ url_for('static', filename='node_modules/fomantic-ui-css/semantic.min.css') | add_date_url}}">
+  <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') | add_date_url}}"></script>
+  <script src="{{ url_for('static', filename='node_modules/fomantic-ui-css/semantic.min.js') | add_date_url}}"></script>
+  {#
+  <script src="{{ url_for('static', filename='brython_modules/brython.js') | add_date_url}}"></script>
+  <script src="{{ url_for('static', filename='brython_modules/brython_stdlib.js') | add_date_url}}"></script>
+#}
 
-  <body onload="brython()">
-    {% block body %}{% endblock %}
-  </body>
-	{% block additional_js %}{% endblock %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.13.2/brython.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.13.2/brython_stdlib.min.js">
+  </script>
+
+  <style type="text/css">
+    body {
+      background-color: #DADADA;
+    }
+  </style>
+
+  {% block default_head %}{% endblock %}
+  {% block additional_head %}{% endblock %}
+</head>
+
+<body onload="brython()">
+  {% block body %}{% endblock %}
+</body>
+{% block additional_js %}{% endblock %}
+
 </html>

@@ -8,8 +8,6 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
-    "brython": "^3.8.9",
-    "fomantic-ui-css": "^2.8.5"
-  },
-  "devDependencies": {}
+    "fomantic-ui-css": "^2.9.4"
+  }
 }

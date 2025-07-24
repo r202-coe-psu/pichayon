@@ -3,6 +3,7 @@
 *.swp
 __pycache__
 node_modules
+brython_modules
 data
 venv
 venv-door
