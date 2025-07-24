@@ -42,7 +42,7 @@ def index():
 
     door_states = dict()
     member_doors = list(set(member_doors))
-    doors = models.Door.objects(id__in=[d.id for d in member_doors])
+    doors = models.Door.objects(id__in=[d.id for d in member_doors]).order_by("+name")
 
     for door in doors:
 
@@ -57,8 +57,6 @@ def index():
             except Exception as e:
                 print(traceback.format_exc())
                 door_states[door.id] = "Unknow"
-
-    doors.order_by("+name")
 
     return render_template(
         "/dashboard/index.html",
