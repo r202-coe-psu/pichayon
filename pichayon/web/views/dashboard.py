@@ -112,14 +112,14 @@ def open_door():
         return response
 
     door_id = request.form.get("door_id")
-    # user_group_id = request.form.get('user_group_id')
+    # # user_group_id = request.form.get('user_group_id')
     door = models.Door.objects.get(id=door_id)
-    # print(door_id)
-    pichayon_client.pichayon_client.open_door(
-        door,
-        current_user,
-        ip=ip,
-    )
+    # # print(door_id)
+    # pichayon_client.pichayon_client.open_door(
+    #     door,
+    #     current_user,
+    #     ip=ip,
+    # )
 
     response = Response()
     response.data = json.dumps({"status": "success", "door_id": str(door.id)})

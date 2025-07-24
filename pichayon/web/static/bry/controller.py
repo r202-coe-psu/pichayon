@@ -6,10 +6,10 @@ def on_complete(response):
         print("Failed to open door:", response.text)
         return
 
-    data = response.json()
+    data = response.json
     document[data.get("door_id")].classList.add("disabled")
     timer.set_timeout(
-        lambda: document[data.get("door_id")].classList.remove("disabled"), 5000
+        lambda: document[data.get("door_id")].classList.remove("disabled"), 10000
     )
 
 
