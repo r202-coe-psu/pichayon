@@ -6,7 +6,7 @@ wheel
 nats-py
 
 # WEB
-Werkzeug==2.1.2
+Werkzeug==3.1.6
 flask
 flask-login
 authlib
