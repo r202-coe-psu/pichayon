@@ -14,7 +14,7 @@ class PichayonClient:
 
         return topic
 
-    async def open_door(self, door, user, type="pichayon", ip="127.0.0.1"):
+    def open_door(self, door, user, type="pichayon", ip="127.0.0.1"):
         data = {
             "action": "open-door",
             "door_id": str(door.id),
@@ -23,16 +23,16 @@ class PichayonClient:
             "ip": ip,
         }
 
-        return await self.message_client.publish(self.topic, data)
+        return self.message_client.publish(self.topic, data)
 
-    async def get_door_state(self, door, type="pichayon"):
+    def get_door_state(self, door, type="pichayon"):
         data = {
             "action": "get-door-state",
             "door": {"id": str(door.id), "state": "unknow"},
         }
 
         topic = self.get_topic(type)
-        return await self.message_client.request(topic, data)
+        return self.message_client.request(topic, data)
 
     # def change_door_group(self, door_group):
     #     data = {
@@ -40,7 +40,7 @@ class PichayonClient:
     #         "door_group_id": str(door_group.id),
     #     }
 
-    #     return await self.message_client.request(self.topic, data)
+    #     return self.message_client.request(self.topic, data)
 
     # def change_user_group(self, user_group):
     #     data = {
@@ -48,8 +48,8 @@ class PichayonClient:
     #         "user_group_id": str(user_group.id),
     #     }
 
-    #     return await self.message_client.request(self.topic, data)
-    async def update_door_information(self, door, user, ip):
+    #     return self.message_client.request(self.topic, data)
+    def update_door_information(self, door, user, ip):
         data = {
             "action": "update-door-information",
             "user_id": str(user.id),
@@ -58,18 +58,18 @@ class PichayonClient:
         }
 
         topic = self.get_topic()
-        return await self.message_client.publish(topic, data)
+        return self.message_client.publish(topic, data)
 
-    async def update_member(self, user):
+    def update_member(self, user):
         data = {
             "action": "update-member",
             "user_id": str(user.id),
         }
 
         topic = self.get_topic()
-        return await self.message_client.publish(topic, data)
+        return self.message_client.publish(topic, data)
 
-    async def update_authorization(self, authorization, user, ip):
+    def update_authorization(self, authorization, user, ip):
         data = {
             "action": "update-authorization",
             "authorization_id": str(authorization.id),
@@ -77,9 +77,9 @@ class PichayonClient:
             "user": str(user.id),
         }
 
-        return await self.message_client.publish(self.topic, data)
+        return self.message_client.publish(self.topic, data)
 
-    async def delete_authorization(self, authorization, user, ip):
+    def delete_authorization(self, authorization, user, ip):
         data = {
             "action": "delete-authorization",
             "authorization_id": str(authorization.id),
@@ -87,7 +87,7 @@ class PichayonClient:
             "user": str(user.id),
         }
 
-        return await self.message_client.publish(self.topic, data)
+        return self.message_client.publish(self.topic, data)
 
 
 pichayon_client = PichayonClient()

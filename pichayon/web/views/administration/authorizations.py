@@ -27,7 +27,7 @@ def index():
     methods=["GET", "POST"],
 )
 @acl.role_required("admin")
-async def add_or_edit(auth_id):
+def add_or_edit(auth_id):
     door_groups = models.DoorGroup.objects()
     user_groups = models.UserGroup.objects()
 
@@ -100,7 +100,7 @@ async def add_or_edit(auth_id):
 
     group_auth.save()
 
-    await pichayon_client.pichayon_client.update_authorization(
+    pichayon_client.pichayon_client.update_authorization(
         group_auth,
         current_user,
         ip=request.headers.get("X-Forwarded-For", request.remote_addr),
@@ -111,12 +111,12 @@ async def add_or_edit(auth_id):
 
 @module.route("/<auth_id>/delete", methods=["GET", "POST"])
 @acl.role_required("admin")
-async def delete(auth_id):
+def delete(auth_id):
     group_auth = models.GroupAuthorization.objects.get(id=auth_id)
     if group_auth:
         group_auth.delete()
 
-        await pichayon_client.pichayon_client.delete_authorization(
+        pichayon_client.pichayon_client.delete_authorization(
             group_auth,
             current_user,
             ip=request.headers.get("X-Forwarded-For", request.remote_addr),

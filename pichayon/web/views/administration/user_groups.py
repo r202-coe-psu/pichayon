@@ -82,7 +82,7 @@ def delete(user_group_id):
 
 
 @module.route("/<user_group_id>/add_member", methods=["POST"])
-async def add_member(user_group_id):
+def add_member(user_group_id):
     form = forms.admin.groups.UserGroupMemberForm()
 
     group = models.UserGroup.objects(id=user_group_id).first()
@@ -128,14 +128,14 @@ async def add_member(user_group_id):
         "user_group_id": str(group.id),
         "user_ids": form.users.data,
     }
-    await nats_client.nats_client.publish("pichayon.controller.command", data)
+    nats_client.nats_client.publish("pichayon.controller.command", data)
     return redirect(
         url_for("administration.user_groups.view", user_group_id=user_group_id)
     )
 
 
 @module.route("/<user_group_id>/delete_user/<member_id>")
-async def delete_member(user_group_id, member_id):
+def delete_member(user_group_id, member_id):
     member = models.UserGroupMember.objects(id=member_id).first()
     user = member.user
 
@@ -151,7 +151,7 @@ async def delete_member(user_group_id, member_id):
         "user_group_id": str(user_group_id),
         "user_id": str(user.id),
     }
-    await nats_client.nats_client.publish("pichayon.controller.command", data)
+    nats_client.nats_client.publish("pichayon.controller.command", data)
 
     return redirect(
         url_for("administration.user_groups.view", user_group_id=user_group_id)

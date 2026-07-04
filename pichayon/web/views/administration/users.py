@@ -121,7 +121,7 @@ def delete(group_id):
 @module.route("/add", methods=["POST", "GET"], defaults={"user_id": None})
 @module.route("/<user_id>/edit", methods=["POST", "GET"])
 @acl.role_required("admin")
-async def add_or_edit(user_id):
+def add_or_edit(user_id):
     form = forms.admin.users.UserForm()
     user = None
     if user_id:
@@ -143,7 +143,7 @@ async def add_or_edit(user_id):
     form.populate_obj(user)
 
     user.save()
-    await pichayon_client.update_member(user)
+    pichayon_client.update_member(user)
 
     return redirect(url_for("administration.users.index"))
 
@@ -178,7 +178,7 @@ def identity(user_id):
 )
 @module.route("/<user_id>/identities/<int:index>/edit", methods=["GET", "POST"])
 @login_required
-async def add_or_edit_identity(user_id, index):
+def add_or_edit_identity(user_id, index):
     user = models.User.objects.get(id=user_id)
 
     form = forms.admin.users.IdentityForm()
@@ -211,7 +211,7 @@ async def add_or_edit_identity(user_id, index):
 
     user.save()
 
-    await pichayon_client.update_member(user)
+    pichayon_client.update_member(user)
 
     return redirect(
         url_for(
@@ -223,14 +223,14 @@ async def add_or_edit_identity(user_id, index):
 
 @module.route("/<user_id>/identities/<int:index>/delete")
 @login_required
-async def delete_identity(user_id, index):
+def delete_identity(user_id, index):
     user = models.User.objects.get(id=user_id)
 
     if index < len(user.identities):
         user.identities.pop(index)
 
     user.save()
-    await pichayon_client.update_member(user)
+    pichayon_client.update_member(user)
 
     return redirect(
         url_for(

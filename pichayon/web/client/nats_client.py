@@ -13,9 +13,10 @@ class NatsClient:
     """NATS client for the web app.
 
     The connection lives on a dedicated event loop running in a daemon
-    thread, so it survives across requests. The async publish/request
-    methods can be awaited from Flask async views (each running on their
-    own short-lived loop) by bridging with run_coroutine_threadsafe.
+    thread, so it survives across requests. publish/request are plain
+    sync methods that bridge onto that loop with run_coroutine_threadsafe,
+    so views stay sync and work under any WSGI server (uwsgi, gunicorn,
+    livereload/tornado).
     """
 
     def __init__(self, app=None):
@@ -56,19 +57,19 @@ class NatsClient:
         if self.loop:
             self.loop.call_soon_threadsafe(self.loop.stop)
 
-    async def publish(self, topic: str, message: dict):
+    def publish(self, topic: str, message: dict):
         # logger.debug(f"publish -> {topic} => {message}")
         future = asyncio.run_coroutine_threadsafe(
             self.nc.publish(topic, json.dumps(message).encode()), self.loop
         )
-        await asyncio.wrap_future(future)
+        future.result(timeout=5)
 
-    async def request(self, topic: str, message: dict):
+    def request(self, topic: str, message: dict):
         # logger.debug(f"request -> {topic} => {message}")
         future = asyncio.run_coroutine_threadsafe(
             self.nc.request(topic, json.dumps(message).encode(), timeout=1), self.loop
         )
-        msg = await asyncio.wrap_future(future)
+        msg = future.result(timeout=5)
         return json.loads(msg.data.decode())
 
 

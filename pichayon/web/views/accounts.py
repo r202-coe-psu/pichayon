@@ -177,7 +177,7 @@ def edit_profile():
 )
 @module.route("/accounts/identities/<int:index>/edit", methods=["GET", "POST"])
 @login_required
-async def add_or_edit_identity(index):
+def add_or_edit_identity(index):
     user = current_user
 
     form = forms.admin.users.IdentityForm()
@@ -210,6 +210,6 @@ async def add_or_edit_identity(index):
 
     user.save()
 
-    await pichayon_client.update_member(user=user)
+    pichayon_client.update_member(user=user)
 
     return redirect(url_for("accounts.index"))

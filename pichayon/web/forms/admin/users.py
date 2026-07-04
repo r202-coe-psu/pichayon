@@ -51,7 +51,7 @@ BaseUserForm = model_form(
         "email": {"label": "Email"},
         "username": {"label": "Username"},
         "status": {"label": "Status"},
-        "id_card_number": {"label": "Citizen ID"},
+        "id_card_number": {"label": "ID Card (Optional)"},
     },
 )
 

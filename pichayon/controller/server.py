@@ -135,6 +135,16 @@ class ControllerServer:
 
         logger.debug("end process command")
 
+    async def remove_old_history_logs(self):
+        while self.running:
+            now = datetime.datetime.now()
+            logger.debug("start removing old history logs")
+            ninety_days_ago = now - datetime.timedelta(days=90)
+            models.HistoryLog.objects(log_date__lt=ninety_days_ago).delete()
+            logger.debug(f"finished removing old history logs {ninety_days_ago.year}-{ninety_days_ago.month}-{ninety_days_ago.day}")
+            await asyncio.sleep(24 * 60 * 60) # Run once every 24 hours
+
+
     async def set_up(self):
         self.nc = NATS()
         logger.debug("Connecting....")
@@ -180,6 +190,8 @@ class ControllerServer:
         loop.run_until_complete(self.set_up())
         command_task = loop.create_task(self.process_command())
         update_data_task = loop.create_task(self.update_data_to_door_controller())
+        remove_old_history_logs_task = loop.create_task(self.remove_old_history_logs())
+
 
         if self.sparkbit_enable:
             sparkbit_task = loop.create_task(self.sparkbit_controller.process_command())

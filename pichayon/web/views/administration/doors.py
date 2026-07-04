@@ -23,7 +23,7 @@ def index():
 @module.route("/create", methods=["GET", "POST"], defaults=dict(door_id=None))
 @module.route("/<door_id>/edit", methods=["GET", "POST"])
 @acl.role_required("admin")
-async def create_or_edit(door_id):
+def create_or_edit(door_id):
     form = DoorForm()
 
     door = None
@@ -101,7 +101,7 @@ async def create_or_edit(door_id):
 
     if door.device_type == "pichayon" and "edit" in request.path:
         ip = request.headers.get("X-Forwarded-For", request.remote_addr)
-        await pichayon_client.pichayon_client.update_door_information(
+        pichayon_client.pichayon_client.update_door_information(
             door,
             current_user,
             ip=ip,
