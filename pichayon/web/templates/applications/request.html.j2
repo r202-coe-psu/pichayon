@@ -1,0 +1,41 @@
+{% extends 'applications/index.html.j2'%}
+{% import '/base/html-renderer.html.j2' as renderer%}
+
+{% block dashboard_title%}
+Create Apply
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('applications.index')}}" class="link link-hover">Application Lists</a>
+<span class="opacity-50">/</span>
+<span class="font-semibold">Create Apply</span>
+{% endblock %}
+
+{% block content %}
+<div class="bg-base-100 rounded-box shadow p-4 md:p-6 max-w-3xl">
+    <form method="POST">
+
+        {{ form.hidden_tag() }}
+
+        {{ renderer.render_select(form.room) }}
+
+        {{ renderer.render_select(form.degree) }}
+
+        {{ renderer.render_select(form.advisor) }}
+
+        {{ renderer.render_field(form.purpose) }}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {{ renderer.render_calendar(form.started_date, calendar_id="started_date_calendar") }}
+            {{ renderer.render_calendar(form.ended_date, calendar_id="ended_date_calendar") }}
+        </div>
+
+        {{ renderer.render_checkbox(form.request_checkbox) }}
+
+        <div class="mt-4">
+            <button class="btn btn-primary" type="submit">Create</button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}

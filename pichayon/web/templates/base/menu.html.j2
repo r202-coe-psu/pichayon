@@ -1,0 +1,20 @@
+<div class="navbar bg-neutral text-neutral-content shadow">
+  <div class="container mx-auto px-4">
+    <div class="flex-1">
+      <a href="{{ url_for('site.index') }}" class="btn btn-ghost text-xl normal-case gap-2">
+        <i class="fa-solid fa-place-of-worship"></i>
+        <span>{{ config['APP_TITLE'] }}</span>
+      </a>
+    </div>
+    <div class="flex-none">
+      <ul class="menu menu-horizontal px-1">
+      {% if current_user.is_authenticated %}
+        <li><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('accounts.logout') }}">Logout</a></li>
+      {% else %}
+        <li><a href="{{ url_for('accounts.login') }}">Login</a></li>
+      {% endif %}
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+{% extends '/administration/index.html.j2' %}
+
+{% block dashboard_title %}
+  Doors Management
+{% endblock %}
+
+{%- block breadcrumbs %}
+{{ super() }}
+<span class="opacity-50">/</span>
+{% if url_for('administration.doors.index') == request.path %}
+  <span class="font-semibold">Doors Management</span>
+{% else %}
+  <a href="{{ url_for('administration.doors.index') }}" class="link link-hover">Doors Management</a>
+{% endif %}
+{%- endblock %}
+
+{% block content %}
+  <div class="mb-4 flex flex-wrap gap-2">
+    <a class="btn btn-primary gap-2" href="{{ url_for('administration.doors.create_or_edit') }}">
+      <i class="fa-solid fa-plus"></i>Create Door
+    </a>
+    <a class="btn btn-primary gap-2" href="{{ url_for('administration.door_groups.create_or_edit') }}">
+      <i class="fa-solid fa-plus"></i>Create Group
+    </a>
+  </div>
+
+  {% if doors | count > 0 %}
+  <div class="overflow-x-auto bg-base-100 rounded-box shadow">
+  <table class="table table-zebra">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Device ID</th>
+        <th>Groups</th>
+        <th>IP Address</th>
+        <th>Acccess time</th>
+        <th>Updated Date</th>
+        <th>Operation</th>
+      </tr>
+    </thead>
+    <tbody>
+	    {% for door in doors %}
+        <tr>
+	        <td><a class="link" href="{{ url_for('administration.doors.view', door_id=door.id) }}">{{ door.name }} <i class="fa-solid fa-eye"></i></a></td>
+          <td>{{ door.description }}</td>
+          <td>{{ door.device_id }}</td>
+          <td>
+            {% for group in door.get_door_groups() %}
+              <a class="link" href="{{ url_for('administration.door_groups.view', door_group_id=group.id) }}">{{ group.name }}</a>,
+            {% endfor %}
+          </td>
+          <td>{{ door.ipv4 }}</td>
+          <td>{{ door.begin_access_time.strftime("%H:%M") }} - {{ door.end_access_time.strftime("%H:%M") }}</td>
+          <td>{{ door.updated_date.ctime() }}</td>
+          <td class="whitespace-nowrap">
+            <a class="btn btn-circle btn-sm btn-info" href="{{ url_for('administration.history_logs.door_logs', door_id=door.id) }}"><i class="fa-solid fa-clock-rotate-left"></i></a>
+            <a class="btn btn-circle btn-sm btn-warning" href="{{ url_for('administration.doors.create_or_edit', door_id=door.id) }}"><i class="fa-solid fa-pen"></i></a>
+            <a class="btn btn-circle btn-sm btn-error" href="{{ url_for('administration.doors.delete', door_id=door.id) }}"><i class="fa-solid fa-trash"></i></a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+  <div class="alert alert-info">
+    <span>Don't have any Door Group.</span>
+  </div>
+  {% endif %}
+{% endblock %}

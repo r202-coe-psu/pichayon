@@ -1,0 +1,30 @@
+{% extends '/administration/index.html.j2' %}
+
+{% block dashboard_title %}
+  {{ door.name }}
+{% endblock %}
+
+{%- block breadcrumbs %}
+{{ super() }}
+<span class="opacity-50">/</span>
+<a href="{{ url_for('administration.doors.index') }}" class="link link-hover">Doors Management</a>
+<span class="opacity-50">/</span>
+<span class="font-semibold">{{ door.name }}</span>
+{%- endblock %}
+
+{% block content %}
+<div class="bg-base-100 rounded-box shadow p-4 md:p-6">
+  <div class="space-y-1">
+    <div><b>Name</b> {{ door.name }}</div>
+    <div><b>Description</b> {{ door.description }}</div>
+    <div><b>Device ID</b> {{ door.device_id }}</div>
+    <div>
+      <b>Groups</b>
+      {% for group in door.groups %}
+        <a class="link" href="{{ url_for('administration.door_groups.view', door_group_id=group.id) }}">{{ group.name }}</a>
+      {% endfor %}
+    </div>
+    <div><b>Updated Date</b> {{ door.updatged_date }}</div>
+  </div>
+</div>
+{% endblock %}

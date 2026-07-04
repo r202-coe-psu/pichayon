@@ -22,7 +22,7 @@ def index():
         .order_by("-id")
     )
     # logs = models.HistoryLog.objects().order_by('-id').limit(100)
-    return render_template("/administration/history_logs/index.html", logs=logs)
+    return render_template("/administration/history_logs/index.html.j2", logs=logs)
 
 
 @module.route("doors/<door_id>")
@@ -42,5 +42,5 @@ def door_logs(door_id):
     )
 
     return render_template(
-        "/administration/history_logs/index.html", logs=logs, door=door
+        "/administration/history_logs/index.html.j2", logs=logs, door=door
     )

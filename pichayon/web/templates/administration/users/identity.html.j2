@@ -1,0 +1,46 @@
+{% extends '/administration/users/index.html.j2' %}
+{% import '/base/html-renderer.html.j2' as renderer %}
+{% block dashboard_title %}
+	Edit
+{% endblock %}
+
+{%- block breadcrumbs %}
+{{ super() }}
+<span class="opacity-50">/</span>
+<span class="font-semibold">{{user.username}} Identity</span>
+{%- endblock %}
+{% block content %}
+  <div class="mb-4">
+    <a class="btn btn-primary" href="{{ url_for('administration.users.add_or_edit_identity', user_id=user.id) }}">Add</a>
+  </div>
+  <div class="overflow-x-auto bg-base-100 rounded-box shadow">
+  <table class="table table-zebra">
+    <thead>
+      <tr>
+        <th>Identifier</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Created Date</th>
+        <th>Updated Date</th>
+        <th>Operation</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for identity in user.identities %}
+      {% set number = identity.identifier %}
+      <tr>
+	<td>{{ '*' * number[:-3] | length + number[-3:] }}</td>
+        <td>{{ identity.type }}</td>
+        <td>{{ identity.status }}</td>
+        <td>{{ identity.created_date }}</td>
+        <td>{{ identity.updated_date }}</td>
+        <td class="whitespace-nowrap">
+          <a class="btn btn-primary btn-sm" href="{{ url_for('administration.users.add_or_edit_identity', user_id=user.id, index=loop.index-1 ) }}">Edit</a>
+          <a class="btn btn-error btn-sm" href="{{ url_for('administration.users.delete_identity', user_id=user.id, index=loop.index-1 ) }}">Delete</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+{% endblock %}

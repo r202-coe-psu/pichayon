@@ -1,0 +1,77 @@
+{% extends '/administration/user_groups/index.html.j2' %}
+{% import '/base/html-renderer.html.j2' as renderer %}
+
+{% block dashboard_title %}
+	{{ group.name }} User Group
+{% endblock %}
+
+{%- block breadcrumbs %}
+{{ super() }}
+<span class="opacity-50">/</span>
+<span class="font-semibold">{{ group.name}}</span>
+{%- endblock %}
+
+{% block content %}
+  <div class="alert mb-4">
+    <span>
+      <b>Description</b> {{ group.description }} <br>
+      <b>Create By</b> {{ group.creator }} <br>
+      <b>Create Date</b> {{ group.created_date }} <br>
+      <b>Update Date</b> {{ group.updated_date }}
+    </span>
+  </div>
+
+  <div class="bg-base-100 rounded-box shadow p-4 md:p-6 mb-4">
+    <h3 class="text-xl font-semibold mb-4">Add Users to Group</h3>
+    <form action="{{ url_for('administration.user_groups.add_member', user_group_id=group.id) }}" method="POST">
+      {{ form.hidden_tag() }}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{ renderer.render_multiple_select(form.users) }}
+        {{ renderer.render_select(form.role) }}
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{ renderer.render_calendar(form.started_date, calendar_id='started_date_calendar') }}
+        {{ renderer.render_calendar(form.expired_date, calendar_id='expired_date_calendar') }}
+      </div>
+      <button type='submit' class="btn btn-primary mt-2">Add User</button>
+    </form>
+  </div>
+
+  {% set members = group.get_user_group_members() %}
+  {% if members | count > 0 %}
+  <div class="overflow-x-auto bg-base-100 rounded-box shadow">
+  <table class="table table-zebra">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Started Date</th>
+        <th>Expired Date</th>
+        <th>Added By</th>
+        <th>Operations</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for member in members | sort(attribute='user.username') %}
+      <tr>
+        <td>{{ member.user.username }}</td>
+	      <td>{{ member.user.first_name }} {{ member.user.last_name}}</td>
+        <td>{{ member.role }}</td>
+        <td>{{ member.started_date.ctime() }}</td>
+        <td>{{ member.expired_date.ctime() if member.expired_date else '' }}</td>
+        <td>{{ member.added_by.username }}</td>
+        <td>
+          <a href="{{ url_for('administration.user_groups.delete_member', user_group_id=group.id, member_id=member.id) }}" class="btn btn-circle btn-sm btn-error"><i class="fa-solid fa-trash"></i></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+  <div class="alert alert-info">
+    <span>Don't have any user in group.</span>
+  </div>
+  {% endif %}
+{% endblock %}

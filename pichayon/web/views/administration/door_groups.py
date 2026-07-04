@@ -15,7 +15,7 @@ module = Blueprint("door_groups", __name__, url_prefix="/doors/groups")
 def index():
     door_groups = models.DoorGroup.objects(status="active").order_by("name")
     return render_template(
-        "/administration/door_groups/index.html", door_groups=door_groups
+        "/administration/door_groups/index.html.j2", door_groups=door_groups
     )
 
 
@@ -25,7 +25,7 @@ def view(door_group_id):
     door_group = models.DoorGroup.objects.get(id=door_group_id)
 
     return render_template(
-        "/administration/door_groups/view.html", door_group=door_group
+        "/administration/door_groups/view.html.j2", door_group=door_group
     )
 
 
@@ -41,7 +41,7 @@ def create_or_edit(door_group_id):
 
     if not form.validate_on_submit():
         return render_template(
-            "/administration/door_groups/create-edit.html", form=form
+            "/administration/door_groups/create-edit.html.j2", form=form
         )
 
     if not door_group:
@@ -74,7 +74,7 @@ def add_door(door_group_id):
 
     if not form.validate_on_submit():
         return render_template(
-            "administration/door_groups/add-door.html", form=form, door_group=door_group
+            "administration/door_groups/add-door.html.j2", form=form, door_group=door_group
         )
 
     for door_id in form.doors.data:

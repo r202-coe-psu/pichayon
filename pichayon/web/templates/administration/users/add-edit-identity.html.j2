@@ -1,0 +1,29 @@
+{% if request.endpoint == 'accounts.add_or_edit_identity' %}
+{% extends '/accounts/index.html.j2' %}
+{% else %}
+{% extends '/administration/users/index.html.j2' %}
+{% endif %}
+
+{% import '/base/html-renderer.html.j2' as renderer %}
+{% block dashboard_title %}
+  Edit Identity
+{% endblock %}
+
+{%- block breadcrumbs %}
+{{ super() }}
+<span class="opacity-50">/</span>
+<span class="font-semibold">Add or Edit Identity</span>
+{%- endblock %}
+{% block content %}
+<div class="bg-base-100 rounded-box shadow p-4 md:p-6 max-w-2xl">
+  <form method="POST">
+    {{ form.csrf_token }}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {{ renderer.render_field(form.identifier) }}
+      {{ renderer.render_select(form.type) }}
+    </div>
+    {{ renderer.render_select(form.status) }}
+    <button class="btn btn-primary mt-2" type="submit">Confirm</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "/base/default-page.html.j2" %}
+
+{% block title %}Log in{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center min-h-[60vh] px-4">
+  <div class="w-full max-w-md text-center">
+    <i class="fa-solid fa-place-of-worship text-6xl"></i>
+    <h2 class="text-3xl font-bold mt-4 mb-6">Login</h2>
+
+    <div class="flex flex-col gap-3 text-left">
+{% if 'psu' in oauth_clients %}
+      <h3 class="font-semibold mt-2">{{ "For PSU" }}</h3>
+      <a class="btn btn-primary btn-lg gap-2" href="{{ url_for('accounts.login_oauth', name='psu') }}">
+        <i class="fa-solid fa-user"></i>{{ "PSU Passport" }}
+      </a>
+{% endif %}
+{% if 'engpsu' in oauth_clients %}
+      <h3 class="font-semibold mt-2">{{ "For PSU Engineering Faculty Member" }}</h3>
+      <a class="btn btn-primary btn-lg gap-2" href="{{ url_for('accounts.login_oauth', name='engpsu') }}">
+        <i class="fa-solid fa-user"></i>{{ "PSU Passport by Eng" }}
+      </a>
+{% endif %}
+{% if 'google' in oauth_clients %}
+      <h3 class="font-semibold mt-2">{{ "For Participant" }}</h3>
+      <a class="btn btn-error btn-lg gap-2 text-white" href="{{ url_for('accounts.login_oauth', name='google') }}">
+        <i class="fa-brands fa-google"></i>{{ "Google" }}
+      </a>
+{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

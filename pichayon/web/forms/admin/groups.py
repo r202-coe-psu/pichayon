@@ -40,13 +40,13 @@ class UserGroupMemberForm(FlaskForm):
 
     started_date = fields.DateTimeField(
         "Started Date",
-        format="%Y-%m-%d %H:%M",
+        format="%Y-%m-%dT%H:%M",
         default=datetime.date.today(),
         widget=widgets.TextInput(),
     )
     expired_date = fields.DateTimeField(
         "Expired Date",
-        format="%Y-%m-%d %H:%M",
+        format="%Y-%m-%dT%H:%M",
         validators=[validators.Optional()],
         widget=widgets.TextInput(),
     )

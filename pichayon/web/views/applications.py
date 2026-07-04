@@ -24,7 +24,7 @@ module = Blueprint("applications", __name__, url_prefix="/applications")
 def index():
     user = current_user._get_current_object()
     applications = models.Application.objects(user=user).order_by("-created_date")
-    return render_template("/applications/index.html", applications=applications)
+    return render_template("/applications/index.html.j2", applications=applications)
 
 
 @module.route("/apply", methods=["GET", "POST"])
@@ -60,7 +60,7 @@ def apply():
                 weeks=52 * 4
             )
         return render_template(
-            "/applications/request.html",
+            "/applications/request.html.j2",
             form=form,
         )
 
@@ -79,7 +79,7 @@ def apply():
 def approve():
     user = current_user._get_current_object()
     applications = models.Application.objects(advisor=user).order_by("-id")
-    return render_template("/applications/approve.html", applications=applications)
+    return render_template("/applications/approve.html.j2", applications=applications)
 
 
 @module.route("/<application_id>/cancel")

@@ -1,0 +1,14 @@
+<div class="hero bg-neutral text-neutral-content py-16">
+  <div class="hero-content text-center">
+    <div class="max-w-md">
+      <i class="fa-solid fa-place-of-worship text-7xl"></i>
+      <h1 class="text-5xl font-bold mt-6">{{ config.get('APP_TITLE') }}</h1>
+      <h2 class="text-xl mt-4">Pichayon Door Management System, Please Login.</h2>
+      <div class="mt-6">
+        <a href="{{ url_for('accounts.login') }}" class="btn btn-primary btn-lg gap-2">
+          <i class="fa-solid fa-user-plus"></i>Login
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+{% macro get_validate_class(errors) -%}
+{%- if errors | count > 0 -%}input-error{%- endif -%}
+{%- endmacro %}
+
+{% macro get_error_messages(errors) -%}
+{% if errors %}
+  <span class="text-error text-sm mt-1 block">{{ ', '.join(errors) }}</span>
+{% endif %}
+{%- endmacro %}

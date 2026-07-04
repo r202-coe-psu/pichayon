@@ -1,0 +1,96 @@
+{% import '/base/error-handler.html.j2' as eh %}
+
+{#
+  Pick the daisyUI control flavour from the WTForms field type.
+  Returns one of: input | select | textarea
+#}
+{% macro _control_kind(field) -%}
+{%- if field.type == 'TextAreaField' or field.type == 'TextListField' -%}textarea
+{%- elif field.type == 'SelectField' or field.type == 'SelectMultipleField' -%}select
+{%- else -%}input
+{%- endif -%}
+{%- endmacro %}
+
+{% macro render_field(field, class_='', type='') -%}
+{%- set kind = _control_kind(field) | trim -%}
+{%- set style = '%s %s-bordered w-full' | format(kind, kind) -%}
+{%- if field.errors -%}
+{%- set style = '%s %s-error' | format(style, kind) -%}
+{%- endif -%}
+{%- if class_ != '' -%}
+{%- set style = '%s %s' | format(style, class_) -%}
+{%- endif -%}
+<div class="form-control w-full mb-3">
+  <label class="label py-1"><span class="label-text font-medium">{{ field.label.text }}</span></label>
+  {%- if type != '' -%}
+  {{ field(class_=style, type=type) }}
+  {%- else -%}
+  {{ field(class_=style) }}
+  {%- endif -%}
+  {{ eh.get_error_messages(field.errors) }}
+</div>
+{%- endmacro %}
+
+{% macro render_checkbox(field) -%}
+<div class="form-control mb-3">
+  <label class="label cursor-pointer justify-start gap-3">
+    {{ field(class_='checkbox checkbox-primary') }}
+    <span class="label-text">{{ field.label.text }}</span>
+  </label>
+  {{ eh.get_error_messages(field.errors) }}
+</div>
+{%- endmacro %}
+
+{% macro render_fileinput(field) -%}
+<div class="form-control w-full mb-3">
+  <label class="label py-1"><span class="label-text font-medium">{{ field.label.text }}</span></label>
+  {{ field(class_='file-input file-input-bordered w-full') }}
+  {{ eh.get_error_messages(field.errors) }}
+</div>
+{%- endmacro %}
+
+{% macro render_select_disabled(field) -%}
+{{ render_field(field, class_='select-disabled') }}
+{%- endmacro %}
+
+{% macro render_select(field) -%}
+{{ render_field(field) }}
+{%- endmacro %}
+
+{% macro render_select_no_search(field) -%}
+{{ render_field(field) }}
+{%- endmacro %}
+
+{% macro render_multiple_select(field) -%}
+{{ render_field(field) }}
+{%- endmacro %}
+
+{% macro render_calendar(field, calendar_id='calendar', type='datetime-local') -%}
+{{ render_field(field, type=type) }}
+{%- endmacro %}
+
+{% macro render_timepicker(field, timepicker_id='timepicker') -%}
+{{ render_field(field, type='time') }}
+{%- endmacro %}
+
+{% macro render_pagination(pagination, endpoint, left_edge=2, left_current=1,right_current=1, right_edge=2) %}
+{% if pagination.pages > 1 %}
+<div class="join">
+  <a class="join-item btn btn-sm {{ 'btn-disabled' if not pagination.has_prev }}"
+    href="{{ url_for(endpoint, page=pagination.prev_num) }}"><i class="fa-solid fa-angle-left"></i></a>
+  {% for page in pagination.iter_pages(left_edge=left_edge, left_current=left_current, right_current=right_current, right_edge=right_edge) %}
+  {% if page %}
+  {% if page != pagination.page %}
+    <a class="join-item btn btn-sm" href="{{ url_for(endpoint, page=page) }}">{{ page }}</a>
+  {% else %}
+    <span class="join-item btn btn-sm btn-active">{{ page }}</span>
+  {% endif %}
+  {% else %}
+    <span class="join-item btn btn-sm btn-disabled">…</span>
+  {% endif %}
+  {% endfor %}
+  <a class="join-item btn btn-sm {{ 'btn-disabled' if not pagination.has_next }}"
+    href="{{ url_for(endpoint, page=pagination.next_num) }}"><i class="fa-solid fa-angle-right"></i></a>
+</div>
+{% endif %}
+{% endmacro %}

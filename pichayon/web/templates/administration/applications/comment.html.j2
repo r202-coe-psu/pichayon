@@ -1,0 +1,22 @@
+{% extends 'administration/applications/index.html.j2' %}
+{% import '/base/html-renderer.html.j2' as renderer%}
+
+{% block dashboard_title %}
+Applications Approve
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('administration.applications.index')}}" class="link link-hover">Application Lists</a>
+<span class="opacity-50">/</span>
+<span class="font-semibold">Remark</span>
+{% endblock %}
+
+{% block content %}
+<div class="bg-base-100 rounded-box shadow p-4 md:p-6 max-w-2xl">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ renderer.render_field(form.remark)}}
+        <button class="btn btn-primary mt-2" type="submit">Submit</button>
+    </form>
+</div>
+{% endblock %}

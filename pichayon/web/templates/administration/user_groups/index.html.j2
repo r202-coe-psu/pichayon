@@ -1,0 +1,56 @@
+{% extends '/administration/index.html.j2' %}
+
+{% block dashboard_title %}
+  Groups
+{% endblock %}
+
+{%- block breadcrumbs %}
+{{ super() }}
+<span class="opacity-50">/</span>
+{% if url_for('administration.user_groups.index') == request.path %}
+  <span class="font-semibold">User Groups</span>
+{% else %}
+  <a href="{{ url_for('administration.user_groups.index') }}" class="link link-hover">User Groups</a>
+{% endif %}
+{%- endblock %}
+
+{% block content %}
+  <div class="mb-4 flex flex-wrap gap-2">
+    <a class="btn btn-primary gap-2" href="{{ url_for('administration.user_groups.create_or_edit') }}">
+      <i class="fa-solid fa-plus"></i>Create Group
+    </a>
+  </div>
+
+  {% if groups and groups | count > 0 %}
+  <div class="overflow-x-auto bg-base-100 rounded-box shadow">
+  <table class="table table-zebra">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Updated Date</th>
+        <th>Operation</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for group in groups %}
+      <tr>
+        <td><a class="link" href="{{url_for('administration.user_groups.view', user_group_id=group.id)}}">{{ group.name }}</a></td>
+        <td>{{ group.description }}</td>
+        <td>{{ group.updated_date.ctime() }}</td>
+        <td class="whitespace-nowrap">
+	        <a href="{{ url_for('administration.user_groups.view', user_group_id=group.id) }}" class="btn btn-circle btn-sm btn-primary"><i class="fa-solid fa-eye"></i></a>
+	        <a href="{{ url_for('administration.user_groups.create_or_edit', user_group_id=group.id) }}" class="btn btn-circle btn-sm btn-warning"><i class="fa-solid fa-pen"></i></a>
+          <a href="{{ url_for('administration.user_groups.delete', user_group_id=group.id) }}" class="btn btn-circle btn-sm btn-error"><i class="fa-solid fa-trash"></i></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+  <div class="alert alert-info">
+    <span>Don't have any Group.</span>
+  </div>
+  {% endif %}
+{% endblock %}

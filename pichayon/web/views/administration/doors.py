@@ -17,13 +17,13 @@ module = Blueprint("doors", __name__, url_prefix="/doors")
 @acl.role_required("admin")
 def index():
     doors = models.Door.objects(status="active").order_by("name")
-    return render_template("/administration/doors/index.html", doors=doors)
+    return render_template("/administration/doors/index.html.j2", doors=doors)
 
 
 @module.route("/create", methods=["GET", "POST"], defaults=dict(door_id=None))
 @module.route("/<door_id>/edit", methods=["GET", "POST"])
 @acl.role_required("admin")
-def create_or_edit(door_id):
+async def create_or_edit(door_id):
     form = DoorForm()
 
     door = None
@@ -44,7 +44,7 @@ def create_or_edit(door_id):
                 form.end_access_time.data = datetime.time()
 
         return render_template(
-            "/administration/doors/create-edit.html",
+            "/administration/doors/create-edit.html.j2",
             form=form,
             door_groups=door_groups,
         )
@@ -101,7 +101,7 @@ def create_or_edit(door_id):
 
     if door.device_type == "pichayon" and "edit" in request.path:
         ip = request.headers.get("X-Forwarded-For", request.remote_addr)
-        pichayon_client.pichayon_client.update_door_information(
+        await pichayon_client.pichayon_client.update_door_information(
             door,
             current_user,
             ip=ip,
@@ -114,11 +114,11 @@ def create_or_edit(door_id):
 
 @module.route("/<door_group_id>/doors_list", methods=["GET", "POST"])
 @acl.role_required("admin")
-def list():
-    doors = models.Door.objects.all()
+def list(door_group_id):
+    door_group = models.DoorGroup.objects.get(id=door_group_id)
     return render_template(
-        "/administration/doors/list.html",
-        doors=doors,
+        "/administration/doors/door_lists.html.j2",
+        door_group=door_group,
     )
 
 
@@ -127,7 +127,7 @@ def list():
 def view(door_id):
     door = models.Door.objects.get(id=door_id)
     return render_template(
-        "/administration/doors/view.html",
+        "/administration/doors/view.html.j2",
         door=door,
     )
 

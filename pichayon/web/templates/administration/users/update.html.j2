@@ -1,0 +1,33 @@
+{% extends '/administration/users/index.html.j2' %}
+{% import '/base/error-handler.html.j2' as eh %}
+
+{% block content %}
+<div class="bg-base-100 rounded-box shadow p-4 md:p-6 max-w-2xl">
+  <h4 class="text-xl font-semibold mb-4">Add room to user {{ user.username }}</h4>
+  {% if errors is not undefined %}
+  <div class="alert alert-error mb-3">
+    <div>
+      <h3 class="font-bold">Errors</h3>
+      {% for error in errors %}<p>{{ error.detail }}</p>{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <form action="{{request.path}}" method="POST">
+  {{ form.csrf_token }}
+    <div class="form-control w-full mb-3">
+      {{ form.room.label(class_='label') }}
+      {{ form.room(class_='select select-bordered w-full') }}
+    </div>
+    <div class="form-control w-full mb-3">
+      {{ form.started_date.label(class_='label') }}
+      {{ form.started_date(class_='input input-bordered w-full', type='date') }}
+    </div>
+    <div class="form-control w-full mb-3">
+      {{ form.expired_date.label(class_='label') }}
+      {{ form.expired_date(class_='input input-bordered w-full', type='date') }}
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+  </form>
+</div>
+{% endblock %}

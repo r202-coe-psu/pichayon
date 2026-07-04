@@ -1,0 +1,59 @@
+{% extends '/administration/index.html.j2' %}
+
+{% block dashboard_title %}
+  Doors
+{% endblock %}
+
+{%- block breadcrumbs %}
+{{ super() }}
+<span class="opacity-50">/</span>
+{% if url_for('administration.users.index') == request.path %}
+  <span class="font-semibold">Users</span>
+{% else %}
+  <a href="{{ url_for('administration.users.index') }}" class="link link-hover">Users</a>
+{% endif %}
+{%- endblock %}
+
+{% block content %}
+  <div class="mb-4 flex justify-end">
+    <a class="btn btn-primary gap-2" href="{{ url_for('administration.users.add_or_edit') }}"><i class="fa-solid fa-plus"></i> Add</a>
+  </div>
+
+  {% if users and users | count > 0 %}
+  <div class="overflow-x-auto bg-base-100 rounded-box shadow">
+  <table class="table table-zebra">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>RFID</th>
+            <th>Operation</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+    <tr>
+      <td><a class="link" href="{{url_for('accounts.index', user=user.id)}}">{{ user.username }}</a></td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.first_name }} {{ user.last_name }}</td>
+      <td>{{ user.roles | join(', ') }}</td>
+      <td>
+      {% if user.identities | length > 0%}
+          {% for identity in user.identities if identity.status == 'active' %}
+            {{ '*' * identity.identifier[:-3] | length + identity.identifier[-3:] }},
+          {% endfor %}
+      {% endif %}
+      </td>
+      <td class="whitespace-nowrap">
+        <a href="{{url_for('administration.users.add_or_edit', user_id=user.id)}}" class="btn btn-circle btn-sm btn-warning"><i class="fa-solid fa-pen"></i></a>
+        <a href="{{url_for('administration.users.identity', user_id=user.id)}}" class="btn btn-circle btn-sm btn-info"><i class="fa-solid fa-id-card"></i></a>
+      </td>
+    </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% endif %}
+{% endblock %}

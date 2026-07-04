@@ -1,0 +1,43 @@
+{% extends '/administration/users/index.html.j2' %}
+{% import '/base/html-renderer.html.j2' as renderer %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  <span class="opacity-50">/</span>
+  {% if request.path == url_for('administration.users.add_or_edit') %}
+    <span class="font-semibold">Add User</span>
+  {% else %}
+    <span class="font-semibold">Edit User</span>
+  {% endif %}
+{% endblock %}
+
+{% block dashboard_title %}
+User
+{% endblock %}
+
+{% block content %}
+  <div class="bg-base-100 rounded-box shadow p-4 md:p-6">
+    <form method="POST">
+      {{ form.hidden_tag() }}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {{ renderer.render_field(form.username) }}
+        {{ renderer.render_field(form.system_id) }}
+        {{ renderer.render_field(form.email) }}
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {{ renderer.render_field(form.first_name) }}
+        {{ renderer.render_field(form.last_name) }}
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {{ renderer.render_field(form.first_name_th) }}
+        {{ renderer.render_field(form.last_name_th) }}
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {{ renderer.render_multiple_select(form.roles) }}
+        {{ renderer.render_field(form.status) }}
+        {{ renderer.render_field(form.id_card_number) }}
+      </div>
+      <button type="submit" class="btn btn-primary mt-2">Submit</button>
+    </form>
+  </div>
+{% endblock %}

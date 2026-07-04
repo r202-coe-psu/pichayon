@@ -1,0 +1,43 @@
+{% extends '/administration/applications/index.html.j2' %}
+{% import '/base/html-renderer.html.j2' as renderer %}
+
+{% block dashboard_title %}
+	Add user to user group from application
+{% endblock %}
+
+{%- block breadcrumbs %}
+{{ super() }}
+<span class="opacity-50">/</span>
+<span class="font-semibold">Application</span>
+{%- endblock %}
+
+{% block content %}
+  <div class="alert mb-4">
+    <span>
+      <b>Create Date</b> {{ application.created_date }} <br>
+      <b>Update Date</b> {{ application.updated_date }}
+    </span>
+  </div>
+
+  <div class="bg-base-100 rounded-box shadow p-4 md:p-6 max-w-3xl">
+    <h3 class="text-xl font-semibold mb-4">Add Users to Group</h3>
+    <form action="" method="POST">
+      {{ form.hidden_tag() }}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+        <div class="form-control mb-3">
+          <label class="label py-1"><span class="label-text font-medium">User</span></label>
+          <div class="py-2">{{ application.user.username }} - {{ application.user.get_full_name() }}</div>
+        </div>
+        {{ renderer.render_select(form.user_groups) }}
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{ renderer.render_select(form.role) }}
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{ renderer.render_calendar(form.started_date, calendar_id='started_date_calendar') }}
+        {{ renderer.render_calendar(form.expired_date, calendar_id='expired_date_calendar') }}
+      </div>
+      <button type='submit' class="btn btn-primary mt-2">Add User</button>
+    </form>
+  </div>
+{% endblock %}

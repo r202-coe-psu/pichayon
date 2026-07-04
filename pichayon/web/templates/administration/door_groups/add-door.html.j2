@@ -1,0 +1,22 @@
+{% extends '/administration/door_groups/index.html.j2' %}
+{% import '/base/html-renderer.html.j2' as renderer %}
+
+{% block dashboard_title %}
+    Add Door to Group
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  <span class="opacity-50">/</span>
+  <span class="font-semibold">Add Door to Group</span>
+{% endblock %}
+
+{% block content %}
+  <div class="bg-base-100 rounded-box shadow p-4 md:p-6 max-w-2xl">
+    <form method="POST">
+      {{ form.csrf_token }}
+      {{ renderer.render_multiple_select(form.doors) }}
+      <button type="submit" class="btn btn-primary mt-2">add</button>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends '/administration/doors/index.html.j2' %}
+
+{% block dashboard_title %}
+  Doors List
+{% endblock %}
+
+{%- block breadcrumbs %}
+{{super()}}
+<span class="opacity-50">/</span>
+<span class="font-semibold">Door List</span>
+{%- endblock %}
+
+{% block content %}
+  <div class="mb-4 flex flex-wrap gap-2">
+    <a class="btn btn-primary gap-2" href="{{ url_for('administration.doors.create', group_id=door_group.id) }}">
+      <i class="fa-solid fa-plus"></i>Add Door
+    </a>
+  </div>
+
+  {% if door_group.members and door_group.members | count > 0 %}
+  <div class="overflow-x-auto bg-base-100 rounded-box shadow">
+  <table class="table table-zebra">
+    <thead>
+      <tr>
+        <th>Door Name</th>
+        <th>Door Type</th>
+        <th>Device ID</th>
+        <th>Description</th>
+        <th>Open via web</th>
+        <th>Passcode</th>
+        <th>Camera</th>
+        <th>Updated Date</th>
+        <th>Operation</th>
+      </tr>
+    </thead>
+    <tbody>
+	    {% for door in door_group.members %}
+      <tr>
+	      <td><a class="link" href="{{url_for('administration.doors.edit', door_id=door.id, group_id=door_group.id)}}">{{ door.name }}</a></td>
+        <td>{{ door.type }}</td>
+        <td>{{ door.device_id }}</td>
+        <td>{{ door.description }}</td>
+        {% if door.have_web_open %}
+        <td><i class="fa-solid fa-check text-success"></i></td>
+        {% else %}
+        <td><i class="fa-solid fa-xmark text-error"></i></td>
+        {% endif %}
+        {% if door.have_passcode %}
+        <td><i class="fa-solid fa-check text-success"></i></td>
+        {% else %}
+        <td><i class="fa-solid fa-xmark text-error"></i></td>
+        {% endif %}
+        {% if door.camera_url | length > 0%}
+        <td><i class="fa-solid fa-check text-success"></i></td>
+        {% else %}
+        <td><i class="fa-solid fa-xmark text-error"></i></td>
+        {% endif %}
+        <td>{{ door.updated_date.ctime() }}</td>
+        <td class="whitespace-nowrap">
+          <a href="{{ url_for('administration.doors.edit', door_id=door.id, group_id=door_group.id) }}" class="btn btn-circle btn-sm btn-warning"><i class="fa-solid fa-pen"></i></a>
+          <a href="{{ url_for('administration.doors.delete', door_id=door.id, group_id=door_group.id) }}" class="btn btn-circle btn-sm btn-error"><i class="fa-solid fa-trash"></i></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+  <div class="alert alert-info">
+    <span>Don't have any Door in this group.</span>
+  </div>
+  {% endif %}
+{% endblock %}

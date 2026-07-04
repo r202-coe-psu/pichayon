@@ -1,0 +1,31 @@
+{% extends '/accounts/index.html.j2' %}
+{% import '/base/error-handler.html.j2' as eh %}
+{% import '/base/html-renderer.html.j2' as renderer %}
+
+{% block breadcrumbs %}
+{{ super() }}
+<span class="opacity-50">/</span>
+<span class="font-semibold">Edit Profile</span>
+{% endblock %}
+
+{% block content %}
+<div class="bg-base-100 rounded-box shadow p-4 md:p-6 max-w-3xl">
+  <h2 class="text-2xl font-bold mb-4">Profile</h2>
+  <form method="POST">
+    {{ form.csrf_token }}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {{ renderer.render_field(form.first_name) }}
+      {{ renderer.render_field(form.last_name) }}
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {{ renderer.render_field(form.first_name_th) }}
+      {{ renderer.render_field(form.last_name_th) }}
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {{ renderer.render_field(form.id_card_number) }}
+    </div>
+
+    <button name="create" type="submit" class="btn btn-primary mt-2">Confirm</button>
+  </form>
+</div>
+{% endblock %}

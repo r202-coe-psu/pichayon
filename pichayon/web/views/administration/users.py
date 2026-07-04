@@ -32,20 +32,20 @@ def generate_passcode():
 @acl.role_required("admin")
 def index():
     users = models.User.objects().order_by("-username", "role")
-    return render_template("/administration/users/index.html", users=users)
+    return render_template("/administration/users/index.html.j2", users=users)
 
 
-@module.route("/<user_group_id>/users_list", methods=["GET", "POST"])
+@module.route("/<group_id>/users_list", methods=["GET", "POST"])
 @acl.role_required("admin")
-def list(user_group_id):
-    group = models.UserGroup.objects.get(id=user_group_id)
-    return render_template("administration/groups/users_list.html", group=group)
+def list(group_id):
+    group = models.UserGroup.objects.get(id=group_id)
+    return render_template("administration/users/users_list.html.j2", group=group)
 
 
-@module.route("/<user_group_id>/adduser", methods=["GET", "POST"])
+@module.route("/<group_id>/adduser", methods=["GET", "POST"])
 @acl.role_required("admin")
-def add(user_group_id):
-    group = models.UserGroup.objects.get(id=user_group_id)
+def add(group_id):
+    group = models.UserGroup.objects.get(id=group_id)
     users = models.User.objects(status="active")
     form = AddingUserForm()
     choices = []
@@ -56,7 +56,7 @@ def add(user_group_id):
     form.username.choices = choices
     if not form.validate_on_submit():
         return render_template(
-            "administration/users/adding-user.html", form=form, group=group
+            "administration/users/adding-user.html.j2", form=form, group=group
         )
     for username in form.username.data:
         user = models.User.objects.get(username=username)
@@ -72,13 +72,13 @@ def add(user_group_id):
             member.role = "supervisor"
         member.save()
 
-    return redirect(url_for("users.list", group_id=group_id))
+    return redirect(url_for("administration.users.list", group_id=group_id))
 
 
-@module.route("/<user_group_id>/add_role", methods=["GET", "POST"])
+@module.route("/<group_id>/add_role", methods=["GET", "POST"])
 @acl.role_required("admin")
-def add_role(user_group_id):
-    group = models.UserGroup.objects.get(id=user_group_id)
+def add_role(group_id):
+    group = models.UserGroup.objects.get(id=group_id)
     user_id = request.args.get("user_id")
     user = models.User.objects.get(id=user_id)
     form = AddRoleUserForm()
@@ -91,7 +91,7 @@ def add_role(user_group_id):
     if not form.validate_on_submit():
         form.role.data = selected_member.role
         return render_template(
-            "administration/users/add-role.html", group=group, form=form
+            "administration/users/add-role.html.j2", group=group, form=form
         )
     user_group = models.UserGroupMember.objects.get(user=user, group=group)
     user_group.role = form.role.data
@@ -100,7 +100,7 @@ def add_role(user_group_id):
         user.roles.append("supervisor")
         user.save()
 
-    return redirect(url_for("users.list", group_id=group_id))
+    return redirect(url_for("administration.users.list", group_id=group_id))
 
 
 @module.route("/<group_id>/deleteuser", methods=["GET", "POST"])
@@ -121,7 +121,7 @@ def delete(group_id):
 @module.route("/add", methods=["POST", "GET"], defaults={"user_id": None})
 @module.route("/<user_id>/edit", methods=["POST", "GET"])
 @acl.role_required("admin")
-def add_or_edit(user_id):
+async def add_or_edit(user_id):
     form = forms.admin.users.UserForm()
     user = None
     if user_id:
@@ -132,7 +132,7 @@ def add_or_edit(user_id):
 
     if not form.validate_on_submit():
         return render_template(
-            "/administration/users/add-or-edit.html",
+            "/administration/users/add-or-edit.html.j2",
             user=user,
             form=form,
         )
@@ -143,7 +143,7 @@ def add_or_edit(user_id):
     form.populate_obj(user)
 
     user.save()
-    pichayon_client.update_member(user)
+    await pichayon_client.update_member(user)
 
     return redirect(url_for("administration.users.index"))
 
@@ -168,7 +168,7 @@ def revoke_passcode(user_id):
 def identity(user_id):
     user = models.User.objects.get(id=user_id)
     return render_template(
-        "administration/users/identity.html",
+        "administration/users/identity.html.j2",
         user=user,
     )
 
@@ -178,7 +178,7 @@ def identity(user_id):
 )
 @module.route("/<user_id>/identities/<int:index>/edit", methods=["GET", "POST"])
 @login_required
-def add_or_edit_identity(user_id, index):
+async def add_or_edit_identity(user_id, index):
     user = models.User.objects.get(id=user_id)
 
     form = forms.admin.users.IdentityForm()
@@ -187,7 +187,7 @@ def add_or_edit_identity(user_id, index):
 
     if not form.validate_on_submit():
         return render_template(
-            "administration/users/add-edit-identity.html",
+            "administration/users/add-edit-identity.html.j2",
             form=form,
         )
 
@@ -211,7 +211,7 @@ def add_or_edit_identity(user_id, index):
 
     user.save()
 
-    pichayon_client.update_member(user)
+    await pichayon_client.update_member(user)
 
     return redirect(
         url_for(
@@ -223,14 +223,14 @@ def add_or_edit_identity(user_id, index):
 
 @module.route("/<user_id>/identities/<int:index>/delete")
 @login_required
-def delete_identity(user_id, index):
+async def delete_identity(user_id, index):
     user = models.User.objects.get(id=user_id)
 
     if index < len(user.identities):
         user.identities.pop(index)
 
     user.save()
-    pichayon_client.update_member(user)
+    await pichayon_client.update_member(user)
 
     return redirect(
         url_for(

@@ -1,0 +1,53 @@
+{% extends '/administration/doors/index.html.j2' %}
+{% import '/base/html-renderer.html.j2' as renderer %}
+
+{% block dashboard_title %}
+  {% if 'edit' in request.path %}
+    Edit: {{ form.name.data }}
+  {% else %}
+    Create New Door
+  {% endif %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  <span class="opacity-50">/</span>
+  {% if 'edit' in request.path %}
+    <span class="font-semibold">Edit: {{ form.name.data }}</span>
+  {% else %}
+    <span class="font-semibold">Create New Door</span>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="bg-base-100 rounded-box shadow p-4 md:p-6 max-w-3xl">
+    <form method="POST">
+      {{ form.csrf_token }}
+      {{ renderer.render_field(form.name) }}
+      {{ renderer.render_field(form.description) }}
+      {{ renderer.render_select(form.device_type) }}
+      {{ renderer.render_field(form.device_id) }}
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{ renderer.render_timepicker(form.begin_access_time, timepicker_id='begin_access_time') }}
+        {{ renderer.render_timepicker(form.end_access_time, timepicker_id='end_access_time') }}
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {{ renderer.render_checkbox(form.is_web_open) }}
+        {{ renderer.render_checkbox(form.is_auto_relock) }}
+        {{ renderer.render_checkbox(form.allow_read_sector0) }}
+      </div>
+
+      {% if device_id_error == 'True' %}
+      <div class="alert alert-error mb-3">
+        <span><b>Error</b> &mdash; Device ID is already</span>
+      </div>
+      {% endif %}
+
+      <button type="submit" class="btn btn-primary mt-2">
+        {% if 'edit' in request.path %}Edit{% else %}Create{% endif %}
+      </button>
+    </form>
+  </div>
+{% endblock %}

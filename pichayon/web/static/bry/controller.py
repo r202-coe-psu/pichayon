@@ -7,9 +7,9 @@ def on_complete(response):
         return
 
     data = response.json
-    document[data.get("door_id")].classList.add("disabled")
+    document[data.get("door_id")].classList.add("btn-disabled")
     timer.set_timeout(
-        lambda: document[data.get("door_id")].classList.remove("disabled"), 10000
+        lambda: document[data.get("door_id")].classList.remove("btn-disabled"), 10000
     )
 
 

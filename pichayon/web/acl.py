@@ -1,4 +1,4 @@
-from flask import redirect, url_for, request
+from flask import current_app, redirect, url_for, request
 from flask_login import LoginManager, current_user, login_url
 from werkzeug.exceptions import Forbidden
 from functools import wraps
@@ -25,7 +25,7 @@ def role_required(*roles):
         def wrapped(*args, **kwargs):
             for role in roles:
                 if current_user.is_authenticated and role in current_user.roles:
-                    return func(*args, **kwargs)
+                    return current_app.ensure_sync(func)(*args, **kwargs)
             raise Forbidden()
 
         return wrapped

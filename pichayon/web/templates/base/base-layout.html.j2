@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="corporate">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title  %}{{ config.get('APP_TITLE') }}{% endblock %}</title>
+
+  {# Tailwind CSS (utilities) + daisyUI (components), no build step #}
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  {# Font Awesome (icons, replaces the Fomantic icon font) #}
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.13.2/brython.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.13.2/brython_stdlib.min.js">
+  </script>
+
+  {% block default_head %}{% endblock %}
+  {% block additional_head %}{% endblock %}
+</head>
+
+<body onload="brython()" class="min-h-screen bg-base-200 text-base-content">
+  {% block body %}{% endblock %}
+</body>
+{% block additional_js %}{% endblock %}
+
+</html>

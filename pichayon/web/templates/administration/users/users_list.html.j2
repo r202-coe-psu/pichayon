@@ -1,0 +1,60 @@
+{% extends '/administration/user_groups/index.html.j2' %}
+
+{% block dashboard_title %}
+	Group: {{group.name}}
+{% endblock %}
+
+{%- block breadcrumbs %}
+{{ super() }}
+<span class="opacity-50">/</span>
+{% if url_for('administration.users.list', group_id=group.id) == request.path %}
+<span class="font-semibold">{{ group.name}}</span>
+{% else %}
+<a href="{{ url_for('administration.users.list', group_id = group.id) }}" class="link link-hover">{{ group.name}}</a>
+{% endif %}
+{%- endblock %}
+
+{% block content %}
+  <div class="mb-4 flex flex-wrap gap-2">
+    <a class="btn btn-primary gap-2" href="{{ url_for('administration.users.add', group_id=group.id) }}">
+      <i class="fa-solid fa-plus"></i>Add User
+    </a>
+  </div>
+
+  {% set members = group.get_user_group_members() %}
+  {% if members | count > 0 %}
+  <div class="overflow-x-auto bg-base-100 rounded-box shadow">
+  <table class="table table-zebra">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Added Date</th>
+        <th>Added By</th>
+        <th>Operations</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for member in members | sort(attribute='user.username') %}
+      <tr>
+        <td>{{ member.user.username }}</td>
+	<td>{{ member.user.first_name }} {{ member.user.last_name}}</td>
+        <td>{{ member.role }}</td>
+        <td>{{ member.added_date.ctime() }}</td>
+        <td>{{ member.added_by.username }}</td>
+        <td class="whitespace-nowrap">
+	  <a href="{{ url_for('administration.users.add_role', group_id=group.id, user_id=member.user.id) }}" class="btn btn-circle btn-sm btn-warning"><i class="fa-solid fa-pen"></i></a>
+          <a href="{{ url_for('administration.users.delete', group_id=group.id, user_id=member.user.id) }}" class="btn btn-circle btn-sm btn-error"><i class="fa-solid fa-trash"></i></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+  <div class="alert alert-info">
+    <span>Don't have any user in group.</span>
+  </div>
+  {% endif %}
+{% endblock %}

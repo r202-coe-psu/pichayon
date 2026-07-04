@@ -1,0 +1,35 @@
+{% extends '/administration/sparkbit/index.html.j2' %}
+{% import '/base/html-renderer.html.j2' as renderer %}
+
+{% block dashboard_title %}
+  {% if 'edit' in request.path %}
+    Edit: {{ form.name.data }}
+  {% else %}
+    Create New Door
+  {% endif %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  <span class="opacity-50">/</span>
+  {% if 'edit' in request.path %}
+    <span class="font-semibold">Edit: {{ form.name.data }}</span>
+  {% else %}
+    <span class="font-semibold">Create New Door</span>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="bg-base-100 rounded-box shadow p-4 md:p-6 max-w-2xl">
+    <form method="POST">
+      {{ form.csrf_token }}
+      {{ renderer.render_field(form.name) }}
+      {{ renderer.render_field(form.description) }}
+      {{ renderer.render_select(form.door) }}
+      {{ renderer.render_field(form.device_id) }}
+      <button type="submit" class="btn btn-primary mt-2">
+        {% if 'edit' in request.path %}Edit{% else %}Create{% endif %}
+      </button>
+    </form>
+  </div>
+{% endblock %}

@@ -23,7 +23,7 @@ module = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 
 @module.route("/")
 @login_required
-def index():
+async def index():
     if not current_user.gave_informations:
         return redirect(url_for("accounts.edit_profile"))
 
@@ -50,7 +50,7 @@ def index():
             door_states[door.id] = door.get_state()
         elif door.device_type == "sparkbit":
             try:
-                response = pichayon_client.pichayon_client.get_door_state(
+                response = await pichayon_client.pichayon_client.get_door_state(
                     door, "sparkbit"
                 )
                 door_states[door.id] = response["door"]["state"]
@@ -59,7 +59,7 @@ def index():
                 door_states[door.id] = "Unknow"
 
     return render_template(
-        "/dashboard/index.html",
+        "/dashboard/index.html.j2",
         door_groups=door_groups,
         user_groups=user_groups,
         doors=doors,
@@ -102,7 +102,7 @@ def get_remote_addr():
 
 @module.route("/open_door", methods=("GET", "POST"))
 @login_required
-def open_door():
+async def open_door():
     ip = get_remote_addr()
     if not is_ip_allowed():
         response = Response(text="IP not allowed", mimetype="text/plain")
@@ -111,7 +111,7 @@ def open_door():
 
     door_id = request.form.get("door_id")
     door = models.Door.objects.get(id=door_id)
-    pichayon_client.pichayon_client.open_door(
+    await pichayon_client.pichayon_client.open_door(
         door,
         current_user,
         ip=ip,

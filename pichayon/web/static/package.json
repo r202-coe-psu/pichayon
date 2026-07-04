@@ -7,7 +7,5 @@
   },
   "author": "",
   "license": "UNLICENSED",
-  "dependencies": {
-    "fomantic-ui-css": "^2.9.4"
-  }
+  "dependencies": {}
 }

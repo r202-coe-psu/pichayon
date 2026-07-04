@@ -57,7 +57,7 @@ def login():
 
     oauth_clients = current_app.extensions["authlib.integrations.flask_client"]._clients
 
-    return render_template("/accounts/login.html", oauth_clients=oauth_clients)
+    return render_template("/accounts/login.html.j2", oauth_clients=oauth_clients)
 
 
 @module.route("/login/<name>")
@@ -147,7 +147,7 @@ def index():
     if request.args.get("user"):
         user_id = request.args.get("user")
         user = models.User.objects.get(id=user_id)
-    return render_template("/accounts/index.html", user=user)
+    return render_template("/accounts/index.html.j2", user=user)
 
 
 @module.route("/accounts/edit-profile", methods=["GET", "POST"])
@@ -157,7 +157,7 @@ def edit_profile():
         obj=current_user,
     )
     if not form.validate_on_submit():
-        return render_template("/accounts/edit-profile.html", form=form)
+        return render_template("/accounts/edit-profile.html.j2", form=form)
 
     user = current_user._get_current_object()
     user.first_name = form.first_name.data
@@ -177,7 +177,7 @@ def edit_profile():
 )
 @module.route("/accounts/identities/<int:index>/edit", methods=["GET", "POST"])
 @login_required
-def add_or_edit_identity(index):
+async def add_or_edit_identity(index):
     user = current_user
 
     form = forms.admin.users.IdentityForm()
@@ -186,7 +186,7 @@ def add_or_edit_identity(index):
 
     if not form.validate_on_submit():
         return render_template(
-            "administration/users/add-edit-identity.html",
+            "administration/users/add-edit-identity.html.j2",
             form=form,
         )
 
@@ -210,6 +210,6 @@ def add_or_edit_identity(index):
 
     user.save()
 
-    pichayon_client.update_member(user=user)
+    await pichayon_client.update_member(user=user)
 
     return redirect(url_for("accounts.index"))

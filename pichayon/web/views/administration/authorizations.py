@@ -17,7 +17,7 @@ module = Blueprint("authorizations", __name__, url_prefix="/auths")
 def index():
     group_auth = models.GroupAuthorization.objects()
     return render_template(
-        "/administration/authorizations/index.html", group_auth=group_auth
+        "/administration/authorizations/index.html.j2", group_auth=group_auth
     )
 
 
@@ -27,7 +27,7 @@ def index():
     methods=["GET", "POST"],
 )
 @acl.role_required("admin")
-def add_or_edit(auth_id):
+async def add_or_edit(auth_id):
     door_groups = models.DoorGroup.objects()
     user_groups = models.UserGroup.objects()
 
@@ -64,7 +64,7 @@ def add_or_edit(auth_id):
 
     if not form.validate_on_submit():
         return render_template(
-            "/administration/authorizations/add_edit.html",
+            "/administration/authorizations/add_edit.html.j2",
             form=form,
         )
 
@@ -100,7 +100,7 @@ def add_or_edit(auth_id):
 
     group_auth.save()
 
-    pichayon_client.pichayon_client.update_authorization(
+    await pichayon_client.pichayon_client.update_authorization(
         group_auth,
         current_user,
         ip=request.headers.get("X-Forwarded-For", request.remote_addr),
@@ -111,12 +111,12 @@ def add_or_edit(auth_id):
 
 @module.route("/<auth_id>/delete", methods=["GET", "POST"])
 @acl.role_required("admin")
-def delete(auth_id):
+async def delete(auth_id):
     group_auth = models.GroupAuthorization.objects.get(id=auth_id)
     if group_auth:
         group_auth.delete()
 
-        pichayon_client.pichayon_client.delete_authorization(
+        await pichayon_client.pichayon_client.delete_authorization(
             group_auth,
             current_user,
             ip=request.headers.get("X-Forwarded-For", request.remote_addr),

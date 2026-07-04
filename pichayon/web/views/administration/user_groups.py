@@ -6,7 +6,6 @@ from pichayon.web import acl, forms
 from pichayon.web.client import nats_client
 from pichayon.web.forms.admin import DoorGroupForm, UserGroupForm
 import datetime
-import json
 
 
 module = Blueprint("user_groups", __name__, url_prefix="/users/groups")
@@ -16,7 +15,7 @@ module = Blueprint("user_groups", __name__, url_prefix="/users/groups")
 @acl.role_required("admin")
 def index():
     groups = models.UserGroup.objects(status="active").order_by("name")
-    return render_template("/administration/user_groups/index.html", groups=groups)
+    return render_template("/administration/user_groups/index.html.j2", groups=groups)
 
 
 @module.route("/create", methods=["GET", "POST"], defaults={"user_group_id": None})
@@ -32,7 +31,7 @@ def create_or_edit(user_group_id=None):
 
     if not form.validate_on_submit():
         return render_template(
-            "/administration/user_groups/create-edit.html", form=form
+            "/administration/user_groups/create-edit.html.j2", form=form
         )
 
     if not user_group:
@@ -60,7 +59,7 @@ def view(user_group_id):
     ]
 
     return render_template(
-        "/administration/user_groups/view.html",
+        "/administration/user_groups/view.html.j2",
         group=group,
         form=form,
     )
@@ -83,7 +82,7 @@ def delete(user_group_id):
 
 
 @module.route("/<user_group_id>/add_member", methods=["POST"])
-def add_member(user_group_id):
+async def add_member(user_group_id):
     form = forms.admin.groups.UserGroupMemberForm()
 
     group = models.UserGroup.objects(id=user_group_id).first()
@@ -124,21 +123,19 @@ def add_member(user_group_id):
         member.save()
 
     # add data in group
-    data = json.dumps(
-        {
-            "action": "add-member-to-group",
-            "user_group_id": str(group.id),
-            "user_ids": form.users.data,
-        }
-    )
-    nats_client.nats_client.publish("pichayon.controller.command", data)
+    data = {
+        "action": "add-member-to-group",
+        "user_group_id": str(group.id),
+        "user_ids": form.users.data,
+    }
+    await nats_client.nats_client.publish("pichayon.controller.command", data)
     return redirect(
         url_for("administration.user_groups.view", user_group_id=user_group_id)
     )
 
 
 @module.route("/<user_group_id>/delete_user/<member_id>")
-def delete_member(user_group_id, member_id):
+async def delete_member(user_group_id, member_id):
     member = models.UserGroupMember.objects(id=member_id).first()
     user = member.user
 
@@ -149,14 +146,12 @@ def delete_member(user_group_id, member_id):
 
     member.delete()
 
-    data = json.dumps(
-        {
-            "action": "delete-member-from-group",
-            "user_group_id": str(user_group_id),
-            "user_id": str(user.id),
-        }
-    )
-    nats_client.nats_client.publish("pichayon.controller.command", data)
+    data = {
+        "action": "delete-member-from-group",
+        "user_group_id": str(user_group_id),
+        "user_id": str(user.id),
+    }
+    await nats_client.nats_client.publish("pichayon.controller.command", data)
 
     return redirect(
         url_for("administration.user_groups.view", user_group_id=user_group_id)

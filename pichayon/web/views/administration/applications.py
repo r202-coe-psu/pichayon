@@ -39,7 +39,7 @@ def index():
     paginated_applications = Pagination(applications, page=page, per_page=30)
 
     return render_template(
-        "/administration/applications/index.html",
+        "/administration/applications/index.html.j2",
         paginated_applications=paginated_applications,
     )
 
@@ -63,7 +63,7 @@ def approved():
     paginated_applications = Pagination(applications, page=page, per_page=30)
 
     return render_template(
-        "/administration/applications/index.html",
+        "/administration/applications/index.html.j2",
         paginated_applications=paginated_applications,
     )
 
@@ -92,7 +92,7 @@ def approve(application_id):
     "/<application_id>/add-or-edit-user-to-user-group", methods=["GET", "POST"]
 )
 @acl.role_required("admin", "lecturer")
-def add_or_edit_user_to_user_group(application_id):
+async def add_or_edit_user_to_user_group(application_id):
     application = models.Application.objects().get(id=application_id)
     form = forms.applications.UserGroupMemberFromApplicationForm()
 
@@ -124,7 +124,7 @@ def add_or_edit_user_to_user_group(application_id):
 
     if not form.validate_on_submit():
         return render_template(
-            "/administration/applications/add-or-edit-user-to-user-group.html",
+            "/administration/applications/add-or-edit-user-to-user-group.html.j2",
             form=form,
             application=application,
         )
@@ -162,7 +162,7 @@ def add_or_edit_user_to_user_group(application_id):
         application.save()
 
         try:
-            pichayon_client.update_member(application.user)
+            await pichayon_client.update_member(application.user)
         except Exception as e:
             print(f"Error updating member {application.user.id}: {e}")
 
@@ -193,7 +193,7 @@ def comment(application_id):
 
     if not form.validate_on_submit():
         return render_template(
-            "/administration/applications/comment.html",
+            "/administration/applications/comment.html.j2",
             form=form,
             application_id=application_id,
         )

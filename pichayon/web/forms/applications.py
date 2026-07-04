@@ -17,8 +17,8 @@ BaseApplicationForm = model_form(
             "label": "Advisor",
             "label_modifier": lambda ad: f"{ad.first_name} {ad.last_name}",
         },
-        "started_date": {"label": "Start Date", "format": "%Y-%m-%d %H:%M"},
-        "ended_date": {"label": "End Date", "format": "%Y-%m-%d %H:%M"},
+        "started_date": {"label": "Start Date", "format": "%Y-%m-%dT%H:%M"},
+        "ended_date": {"label": "End Date", "format": "%Y-%m-%dT%H:%M"},
         "room": {"label": "Room", "label_modifier": lambda r: r.name},
         "purpose": {"label": "Purpose"},
         "request_checkbox": {"label": "ยอมรับนโยบายการเข้าใช้งานสถานที่"},
@@ -57,13 +57,13 @@ class UserGroupMemberFromApplicationForm(FlaskForm):
 
     started_date = fields.DateTimeField(
         "Started Date",
-        format="%Y-%m-%d %H:%M",
+        format="%Y-%m-%dT%H:%M",
         default=datetime.date.today(),
         widget=widgets.TextInput(),
     )
     expired_date = fields.DateTimeField(
         "Expired Date",
-        format="%Y-%m-%d %H:%M",
+        format="%Y-%m-%dT%H:%M",
         validators=[validators.Optional()],
         widget=widgets.TextInput(),
     )

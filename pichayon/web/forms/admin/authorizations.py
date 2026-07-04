@@ -13,13 +13,13 @@ class AuthorityForm(FlaskForm):
     door_group = fields.SelectField("Door Group")
     started_date = fields.DateTimeField(
         "Start Date",
-        format="%Y-%m-%d %H:%M",
+        format="%Y-%m-%dT%H:%M",
         default=datetime.datetime.now(),
         widget=widgets.TextInput(),
     )
     expired_date = fields.DateTimeField(
         "Expire Date",
-        format="%Y-%m-%d %H:%M",
+        format="%Y-%m-%dT%H:%M",
         default=datetime.datetime.now(),
         widget=widgets.TextInput(),
     )
