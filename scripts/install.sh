@@ -39,7 +39,10 @@ cd ..
 
 
 echo "copy service file"
-sudo cp /home/$USER/pichayon/scripts/pichayon-door.service /lib/systemd/system
+sudo cp /home/$USER/pichayon/scripts/lib/systemd/system/pichayon-door.service /lib/systemd/system
+
+echo "copy service file"
+sudo cp /home/$USER/pichayon/scripts/etc/logrotage.d/pichayon /etc/logrotage.d
 
 if [ ! -d /var/log/pichayon ]
 then
@@ -54,4 +57,5 @@ fi
 echo "enable service"
 sudo systemctl daemon-reload
 sudo systemctl enable pichayon-door.service
+sudo systemctl restart logrotate.service
 
