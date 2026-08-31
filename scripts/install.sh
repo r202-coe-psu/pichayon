@@ -21,7 +21,6 @@ else
 fi
 
 
-
 export CFLAGS="-fcommon"
 
 source /home/$USER/pichayon/venv/bin/activate
@@ -53,9 +52,13 @@ else
     echo "pichayon log found"
 fi
 
+echo "set time zone"
+sudo timedatectl set-timezone Asia/Bangkok
+
 
 echo "enable service"
 sudo systemctl daemon-reload
 sudo systemctl enable pichayon-door.service
+sudo systemctl restart pichayon-door.service
 sudo systemctl restart logrotate.service
 
