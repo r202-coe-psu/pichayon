@@ -50,6 +50,19 @@ else
     echo "pichayon log found"
 fi
 
+echo "copy logrotate config file"
+sudo cp /home/$USER/pichayon/scripts/pichayon-door-logrotate.conf /etc/logrotate.d/pichayon
+
+if [ ! -d /var/log/pichayon ]
+then
+    echo "create log directory"
+    sudo mkdir /var/log/pichayon
+    sudo chown -R $USER: /var/log/pichayon
+else
+    echo "pichayon log found"
+fi
+
+
 
 echo "enable service"
 sudo systemctl daemon-reload

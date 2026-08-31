@@ -35,6 +35,9 @@ class Device:
         self.last_opened_date = datetime.datetime.now()
 
         self.reader_name = self.settings.get("PICHAYON_DOOR_READER", "ASR1200E")
+        self.door_closed_active_height = self.settings.get(
+            "PICHAYON_DOOR_CLOSED_ACTIVE_HIGH", True
+        )
         print(self.reader_name)
         self.rfid = None
         self.door_config = {}
@@ -200,7 +203,10 @@ class Device:
         return not GPIO.input(self.switch_pin)
 
     async def is_door_opened(self):
-        return GPIO.input(self.door_closed_pin)
+        if self.door_closed_active_height:
+            return GPIO.input(self.door_closed_pin)
+
+        return not GPIO.input(self.door_closed_pin)
 
     async def is_access_time(self):
         current_time = datetime.datetime.now().time()
