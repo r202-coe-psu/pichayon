@@ -6,7 +6,6 @@ from functools import wraps
 
 from .. import models
 
-
 login_manager = LoginManager()
 
 

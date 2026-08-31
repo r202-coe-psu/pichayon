@@ -52,10 +52,10 @@ class RC522RFIDReader:
         # logger.debug('okayy')
         self.reader.wait_for_tag()
         try:
-            (error, tag_type) = self.reader.request()
+            error, tag_type = self.reader.request()
             if not error:
 
-                (error, uid) = self.reader.anticoll()
+                error, uid = self.reader.anticoll()
 
                 if not error:
                     self.reader.stop_crypto()
