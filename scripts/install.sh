@@ -55,7 +55,6 @@ fi
 echo "set time zone"
 sudo timedatectl set-timezone Asia/Bangkok
 
-
 echo "enable service"
 sudo systemctl daemon-reload
 sudo systemctl enable pichayon-door.service

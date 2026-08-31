@@ -13,7 +13,6 @@ def initial_profile(app, options):
 
 
 def get_program_options(default_host="127.0.0.1", default_port="8000"):
-
     """
     Takes a flask.Flask instance and runs it.
     Parses command-line flags to configure the app.

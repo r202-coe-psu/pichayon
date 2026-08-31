@@ -23,9 +23,16 @@ class Manager:
         serialization = SerializationMiddleware(JSONStorage)
         serialization.register_serializer(DateTimeSerializer(), "TinyDate")
 
-        self.db = TinyDB(str(dbpath), storage=serialization)
-
         self.device_id = device_id
+
+        self.db = None
+        try:
+            self.db = TinyDB(str(dbpath), storage=serialization)
+        except Exception as e:
+            logger.exeception(e)
+            p = pathlib.Path(dbpath)
+            p.unlink(missing_ok=True)
+            self.db = TinyDB(str(dbpath), storage=serialization)
 
     # def initial_data_after_restart(self, data):
     #     logger.debug('Initial data')

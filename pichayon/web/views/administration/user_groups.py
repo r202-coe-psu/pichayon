@@ -7,7 +7,6 @@ from pichayon.web.client import nats_client
 from pichayon.web.forms.admin import DoorGroupForm, UserGroupForm
 import datetime
 
-
 module = Blueprint("user_groups", __name__, url_prefix="/users/groups")
 
 

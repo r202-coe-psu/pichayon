@@ -30,8 +30,6 @@ class RS485Reader(readers.Reader):
 
         self.key_types = key_types
         self.door_config = door_config
-        self.command_read_sector0 = self.get_command_read_sector0()
-        self.command_read_default_sector0 = self.get_command_read_default_sector0()
         self.data = []
         self.raw_data = []
         self.tag = []
@@ -215,14 +213,14 @@ class RS485Reader(readers.Reader):
 
     async def read_sector0(self):
         byte_command = b"".join(
-            [d.to_bytes(1, "big") for d in self.command_read_sector0]
+            [d.to_bytes(1, "big") for d in self.get_command_read_sector0()]
         )
         self.writer.write(byte_command)
         await self.writer.drain()
 
     async def read_default_sector0(self):
         byte_command = b"".join(
-            [d.to_bytes(1, "big") for d in self.command_read_default_sector0]
+            [d.to_bytes(1, "big") for d in self.get_command_read_default_sector0()]
         )
         self.writer.write(byte_command)
         await self.writer.drain()
