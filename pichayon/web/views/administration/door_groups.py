@@ -74,7 +74,9 @@ def add_door(door_group_id):
 
     if not form.validate_on_submit():
         return render_template(
-            "administration/door_groups/add-door.html.j2", form=form, door_group=door_group
+            "administration/door_groups/add-door.html.j2",
+            form=form,
+            door_group=door_group,
         )
 
     for door_id in form.doors.data:

@@ -32,7 +32,9 @@ def create():
     doors = models.Door.objects(status="active")
     form.door.choices = [(str(door.id), door.name) for door in doors]
     if not form.validate_on_submit():
-        return render_template("/administration/sparkbit/create-edit.html.j2", form=form)
+        return render_template(
+            "/administration/sparkbit/create-edit.html.j2", form=form
+        )
     sparkbit_door = models.SparkbitDoorSystem()
     form.populate_obj(sparkbit_door)
     sparkbit_door.creator = current_user._get_current_object()
@@ -58,7 +60,9 @@ def edit(sparkbit_door_id):
     if not form.validate_on_submit():
         print(form.errors)
         print(form.door.choices)
-        return render_template("/administration/sparkbit/create-edit.html.j2", form=form)
+        return render_template(
+            "/administration/sparkbit/create-edit.html.j2", form=form
+        )
 
     form.populate_obj(sparkbit_door)
     sparkbit_door.creator = current_user._get_current_object()

@@ -19,9 +19,9 @@ class Device:
         self.door_id = None
         self.log_manager = None
 
-        self.door_closed_pin = self.settings.get('PICHAYON_DOOR_PIN_CLOSED', 15)
-        self.switch_pin = self.settings.get('PICHAYON_DOOR_PIN_SWITCH', 16)
-        self.relay_pin = self.settings.get('PICHAYON_DOOR_PIN_RELAY', 18)
+        self.door_closed_pin = self.settings.get("PICHAYON_DOOR_PIN_CLOSED", 15)
+        self.switch_pin = self.settings.get("PICHAYON_DOOR_PIN_SWITCH", 16)
+        self.relay_pin = self.settings.get("PICHAYON_DOOR_PIN_RELAY", 18)
 
         self.is_relay_active_high = settings.get(
             "PICHAYON_DOOR_RELAY_ACTIVE_HIGH", True
