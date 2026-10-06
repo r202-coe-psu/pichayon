@@ -39,13 +39,13 @@ class Reader:
 
     async def verify_tag(self):
         while self.running:
-            tag = self.read_queue.get()
-            self.tag_queue.push(tag)
+            tag = await self.read_queue.get()
+            await self.tag_queue.put(tag)
 
     async def wait_for_tag(self):
         while self.running:
-            self.read_queue.put(None)
-            asyncio.sleep(10)
+            await self.read_queue.put(None)
+            await asyncio.sleep(10)
 
     async def get_id(self):
         tag = await self.tag_queue.get()

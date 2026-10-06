@@ -8,19 +8,18 @@ from .history_logs import HistoryLog
 from .applications import Application
 
 __all__ = [
-    User,
-    Identity,
-    Door,
-    OAuth2Token,
-    UserGroup,
-    UserGroupMember,
-    DoorGroup,
-    GroupAuthorization,
-    # DoorGroupAuthorization,
-    # UserGroupAuthorization,
-    Rrule,
-    HistoryLog,
-    SparkbitDoorSystem,
+    "User",
+    "Identity",
+    "Door",
+    "OAuth2Token",
+    "UserGroup",
+    "UserGroupMember",
+    "DoorGroup",
+    "GroupAuthorization",
+    "Rrule",
+    "HistoryLog",
+    "SparkbitDoorSystem",
+    "Application",
 ]
 
 from flask_mongoengine import MongoEngine

@@ -99,15 +99,6 @@ class DoorController:
             return
 
         try:
-            # response = requests.post(
-            #         self.door_unlock_url.format(
-            #             sparkbit_door.device_id.replace('door-', '')),
-            #         verify=False)
-            # logger.debug(response.status_code)
-            # if response.status_code != 200:
-            #     logger.debug(f'door {user.system_id} is not open')
-            #     return
-
             db = self.client[sparkbit_door.device_id]
             if "status" not in db:
                 logger.debug(f"door {user.system_id} is not open -> no status")
@@ -126,7 +117,7 @@ class DoorController:
 
             logger.debug(f"door {user.system_id} is open")
         except Exception as e:
-            logger.debug(e)
+            logger.exception(e)
 
     async def add_user(self, command):
         door = None

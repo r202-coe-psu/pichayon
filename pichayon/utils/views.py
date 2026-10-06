@@ -1,4 +1,6 @@
-def get_subblueprints(views=[]):
+def get_subblueprints(views=None):
+    if views is None:
+        views = []
     blueprints = []
     for view in views:
         blueprints.append(view.module)

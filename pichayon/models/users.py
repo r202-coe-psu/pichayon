@@ -15,12 +15,12 @@ ROLE_CHOICES = [
 class Identity(me.EmbeddedDocument):
     identifier = me.StringField(required=True, default="")
     type = me.StringField(required=True, default="rfid")
-    status = me.StringField(default=True, status="active")
+    status = me.StringField(required=True, default="active")
     added_with = me.StringField(required=True, default="web")
     added_by = me.StringField(required=True, default="system")
 
-    created_date = me.DateTimeField(required=True, default=datetime.datetime.now())
-    updated_date = me.DateTimeField(required=True, default=datetime.datetime.now())
+    created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
 
 class User(me.Document, UserMixin):

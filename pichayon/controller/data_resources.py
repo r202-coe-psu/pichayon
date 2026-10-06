@@ -104,6 +104,6 @@ class DataResourceManager:
         key_types["key_type_a_sector_0"] = key_type_a_sector_0
         key_types["default_key_type_a"] = default_key_type_a
         key_types["default_key_type_b"] = default_key_type_b
-        en_key_types = aes_crypto.encrypt(str(key_types))
+        en_key_types = aes_crypto.encrypt(json.dumps(key_types))
 
         return en_key_types

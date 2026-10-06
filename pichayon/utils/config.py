@@ -1,5 +1,8 @@
 import os
+import logging
 import flask
+
+logger = logging.getLogger(__name__)
 
 settings = None
 
@@ -11,9 +14,9 @@ def get_settings():
         filename = os.environ.get("PICHAYON_SETTINGS", None)
 
         if filename is None:
-            print("This program require PICHAYON_SETTINGS environment")
+            logger.error("This program require PICHAYON_SETTINGS environment")
             return
-        print(filename)
+        logger.debug(filename)
 
         file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../")
 

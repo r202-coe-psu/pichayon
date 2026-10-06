@@ -88,8 +88,10 @@ class Door(me.Document):
         return [door_auth.user_group for door_auth in door_auths]
 
     def get_door_attributes(self):
-        if type == "sparkbit":
-            return models.SparkbitDoorSystem.object.get(door=self)
+        if self.device_type == "sparkbit":
+            from .door_systems import SparkbitDoorSystem
+
+            return SparkbitDoorSystem.objects(door=self).first()
 
         return None
 

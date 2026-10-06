@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from flask import (
     Blueprint,
@@ -21,6 +22,8 @@ from pichayon.web import forms
 
 module = Blueprint("applications", __name__, url_prefix="/applications")
 
+logger = logging.getLogger(__name__)
+
 
 @module.route("")
 @acl.role_required("admin", "lecturer")
@@ -32,9 +35,7 @@ def index():
         user = current_user._get_current_object()
         user_group_members = models.UserGroupMember.objects(user=user, role="admin")
         if user_group_members:
-            applications.filter(user=user)
-
-            return redirect(url_for("applications.approve"))
+            applications = applications.filter(user=user)
 
     paginated_applications = Pagination(applications, page=page, per_page=30)
 
@@ -56,9 +57,7 @@ def approved():
         user = current_user._get_current_object()
         user_group_members = models.UserGroupMember.objects(user=user, role="admin")
         if user_group_members:
-            applications.filter(user=user)
-
-            return redirect(url_for("applications.approve"))
+            applications = applications.filter(user=user)
 
     paginated_applications = Pagination(applications, page=page, per_page=30)
 
@@ -71,15 +70,6 @@ def approved():
 @module.route("/<application_id>/approve")
 @acl.role_required("admin", "lecturer")
 def approve(application_id):
-    # application = models.Application.objects().get(id=application_id)
-
-    # application.approved_by = current_user._get_current_object()
-    # application.approved_date = datetime.datetime.now()
-    # application.status = "approved"
-    # application.ip_address = request.headers.get("X-Forwarded-For", request.remote_addr)
-
-    # application.save()
-
     return redirect(
         url_for(
             "administration.applications.add_or_edit_user_to_user_group",
@@ -164,7 +154,7 @@ def add_or_edit_user_to_user_group(application_id):
         try:
             pichayon_client.update_member(application.user)
         except Exception as e:
-            print(f"Error updating member {application.user.id}: {e}")
+            logger.exception(f"Error updating member {application.user.id}: {e}")
 
     return redirect(url_for("administration.applications.index"))
 

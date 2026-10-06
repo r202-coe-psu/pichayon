@@ -21,13 +21,13 @@ logger = logging.getLogger(__name__)
 
 
 class WiegandReader(readers.Reader):
-    def __init__(self, d0_pin=11, d1_pin=12, beep_pin=37, timeout=0.05):
+    def __init__(self, d0_pin=11, d1_pin=12, beep_pin=13, timeout=0.05):
         super().__init__()
 
         # Pin Definitons:
-        self.d0_pin = 11
-        self.d1_pin = 12
-        self.beep_pin = 13
+        self.d0_pin = d0_pin
+        self.d1_pin = d1_pin
+        self.beep_pin = beep_pin
         self.timeout = timeout
 
         GPIO.setup(self.d0_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)

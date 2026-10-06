@@ -31,7 +31,7 @@ def generate_passcode():
 @module.route("/")
 @acl.role_required("admin")
 def index():
-    users = models.User.objects().order_by("-username", "role")
+    users = models.User.objects().order_by("-username")
     return render_template("/administration/users/index.html.j2", users=users)
 
 
@@ -83,20 +83,22 @@ def add_role(group_id):
     user = models.User.objects.get(id=user_id)
     form = AddRoleUserForm()
     form.role.choices = [("supervisor", "Supervisor"), ("member", "Member")]
+    selected_member = None
     for member in group.get_user_group_members():
         if user == member.user:
             selected_member = member
             break
 
     if not form.validate_on_submit():
-        form.role.data = selected_member.role
+        if selected_member:
+            form.role.data = selected_member.role
         return render_template(
             "administration/users/add-role.html.j2", group=group, form=form
         )
     user_group = models.UserGroupMember.objects.get(user=user, group=group)
     user_group.role = form.role.data
     user_group.save()
-    if "Supervisor" in form.role.data and "Supervisor" not in user.roles:
+    if form.role.data == "supervisor" and "supervisor" not in user.roles:
         user.roles.append("supervisor")
         user.save()
 
@@ -109,11 +111,10 @@ def delete(group_id):
     group = models.UserGroup.objects.get(id=group_id)
     user_id = request.args.get("user_id")
     user = models.User.objects.get(id=user_id)
-    for member in group.members:
+    for member in group.get_user_group_members():
         if member.user == user:
-            group.members.remove(member)
+            member.delete()
             break
-    group.save()
 
     return redirect(url_for("administration.users.list", group_id=group_id))
 

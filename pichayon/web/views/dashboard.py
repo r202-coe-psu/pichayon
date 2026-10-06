@@ -105,7 +105,7 @@ def get_remote_addr():
 def open_door():
     ip = get_remote_addr()
     if not is_ip_allowed():
-        response = Response(text="IP not allowed", mimetype="text/plain")
+        response = Response("IP not allowed", mimetype="text/plain")
         response.status_code = 403
         return response
 

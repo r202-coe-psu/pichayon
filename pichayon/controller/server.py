@@ -84,15 +84,6 @@ class ControllerServer:
         while self.running:
             data = await self.command_queue.get()
             logger.debug(f"process => {data}")
-            # if data['action'] == 'update_passcode':
-            #     door = models.Door.objects.get(id=data['door_id'])
-            #     topic = f'pichayon.door_controller.{door.device_id}'
-            #     logger.debug('update passcode')
-            #     response = await self.data_resource.get_authorization_data(door.device_id)
-            #     await self.nc.publish(topic,
-            #                     json.dumps(response).encode())
-            #     logger.debug('update Success')
-            #     continue
 
             commands = {
                 "open-door": self.door_manager.open,
@@ -199,7 +190,7 @@ class ControllerServer:
         try:
             loop.run_forever()
         except Exception as e:
-            print("got:", e)
+            logger.exception(e)
             self.running = False
             if self.sparkbit_enable:
                 self.sparkbit_controller.stop()

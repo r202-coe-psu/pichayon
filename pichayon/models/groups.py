@@ -52,7 +52,7 @@ class UserGroup(me.Document):
 
     def is_supervisor(self, user):
         user_group_member = UserGroupMember.objects(user=user, group=self).first()
-        if "superisor" == user_group_member.role:
+        if user_group_member and user_group_member.role == "supervisor":
             return True
 
         return False
@@ -80,23 +80,23 @@ class DoorGroup(me.Document):
     meta = {"collection": "door_groups"}
 
     def get_door_members(self):
-        return Door.objects(groups=self)
+        return self.doors
 
     def is_member(self, door):
-        for member in self.members:
+        for member in self.doors:
             if member == door:
                 return True
 
         return False
 
     def search_device_id(self, device_id):
-        for door in self.members:
+        for door in self.doors:
             if door.device_id == device_id:
                 return True
         return False
 
     def get_all_door_id(self):
         doors_id = []
-        for door in self.members:
+        for door in self.doors:
             doors_id.append(str(door.id))
         return doors_id

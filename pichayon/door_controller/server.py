@@ -37,8 +37,6 @@ class DoorControllerServer:
         )
 
         self.key_types = {}
-        # self.keypad = keypad.Keypad()
-        # self.passcode = ''
 
         self.running = False
         self.max_rfid_read_retry = self.settings.get("MAX_RFID_READ_RETRY", 3)
@@ -116,37 +114,6 @@ class DoorControllerServer:
             await asyncio.sleep(0.01)
 
         logger.debug("end process controller command")
-
-    async def process_keypad(self):
-        time_stamp = datetime.datetime.now()
-        passcode = ""
-        while self.running:
-            # passcode will expire in 3 sec
-            if datetime.datetime.now() > time_stamp + datetime.timedelta(seconds=3):
-                passcode = ""
-
-            key = self.keypad.get_key()
-            if key is None:
-                await asyncio.sleep(0.25)
-                continue
-            time_stamp = datetime.datetime.now()
-            passcode += key
-            logger.debug(f"passcode >>> {passcode}")
-            if len(passcode) == 6:
-                # device_passcode = self.db.search(self.query.passcode == passcode)
-                user_passcode = self.db.search(self.query.passcode == passcode)
-                if user_passcode:
-                    await self.device.open_door()
-                    # self.db.insert({
-                    #     'username': user_passcode[0]['username'],
-                    #     'action': 'open_door',
-                    #     'type': 'passcode',
-                    #     'datetime': datetime.datetime.now().strftime("%Y, %m, %d, %H, %M, %S"),
-                    #     'status': 'wait'
-                    #     })
-                passcode = ""
-                await asyncio.sleep(2)
-            await asyncio.sleep(0.2)
 
     async def read_rfid(self):
         try:
@@ -303,7 +270,7 @@ class DoorControllerServer:
                     await self.device.update_information(data.get("door", {}))
 
                     aes_crypto = crypto.AESCrypto(self.device_id)
-                    self.key_types = eval(aes_crypto.decrypt(ciphertext))
+                    self.key_types = json.loads(aes_crypto.decrypt(ciphertext))
                     await self.device.set_key_types(self.key_types)
 
                     self.cc_id = await self.nc.subscribe(
@@ -395,17 +362,13 @@ class DoorControllerServer:
         listen_door_closed_task = loop.create_task(self.listen_door_closed())
         process_logging_task = loop.create_task(self.process_log())
 
-        # process_access_time_task = loop.create_task(self.process_access_time())
-
-        # process_keypad_task = loop.create_task(self.process_keypad())
         logger.debug("end setup device")
         try:
             loop.run_forever()
         except Exception as e:
+            logger.exception(e)
             self.running = False
-            self.processor_controller.stop_all()
             self.nc.close()
         finally:
-            # self.read_rfid_thread.join(timeout=1)
             loop.close()
             GPIO.cleanup()

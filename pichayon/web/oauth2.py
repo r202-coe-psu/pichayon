@@ -17,9 +17,11 @@ def fetch_token(name):
 
 
 def update_token(name, token):
-    item = models.OAuth2Token(
+    item = models.OAuth2Token.objects(
         name=name, user=current_user._get_current_object()
     ).first()
+    if not item:
+        item = models.OAuth2Token(name=name, user=current_user._get_current_object())
     item.token_type = token.get("token_type", "Bearer")
     item.access_token = token.get("access_token")
     item.refresh_token = token.get("refresh_token")
@@ -69,14 +71,18 @@ def create_user_engpsu(user_info, user=None):
         user.username = user_info.get("username")
 
     if "staff_id" in user_info.keys():
-        user.roles.append("staff")
+        if "staff" not in user.roles:
+            user.roles.append("staff")
     elif "student_id" in user_info.keys():
-        user.roles.append("student")
+        if "student" not in user.roles:
+            user.roles.append("student")
 
     if user_info["username"].isdigit():
-        user.roles.append("student")
+        if "student" not in user.roles:
+            user.roles.append("student")
     else:
-        user.roles.append("staff")
+        if "staff" not in user.roles:
+            user.roles.append("staff")
 
     user.save()
     return user

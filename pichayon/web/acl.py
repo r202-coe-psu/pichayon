@@ -6,6 +6,10 @@ from functools import wraps
 
 from .. import models
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 login_manager = LoginManager()
 
 
@@ -40,7 +44,7 @@ def load_user(user_id):
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
-    print(request.method, request.url)
+    logger.debug("%s %s", request.method, request.url)
     if request.method == "GET":
         response = redirect(login_url("accounts.login", request.url))
         return response

@@ -29,7 +29,7 @@ class Manager:
         try:
             self.db = TinyDB(str(dbpath), storage=serialization)
         except Exception as e:
-            logger.exeception(e)
+            logger.exception(e)
             p = pathlib.Path(dbpath)
             p.unlink(missing_ok=True)
             self.db = TinyDB(str(dbpath), storage=serialization)

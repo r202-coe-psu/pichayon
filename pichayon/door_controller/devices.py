@@ -38,7 +38,7 @@ class Device:
         self.door_closed_active_height = self.settings.get(
             "PICHAYON_DOOR_CLOSED_ACTIVE_HIGH", True
         )
-        print(self.reader_name)
+        logger.debug(self.reader_name)
         self.rfid = None
         self.door_config = {}
         self.key_types = {}
