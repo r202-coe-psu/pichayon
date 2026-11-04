@@ -287,9 +287,12 @@ class DoorControllerServer:
                     self.is_register = True
                     await self.device.update_information(data.get("door", {}))
 
-                    aes_crypto = crypto.AESCrypto(self.device_id)
-                    self.key_types = json.loads(aes_crypto.decrypt(ciphertext))
-                    await self.device.set_key_types(self.key_types)
+                    try:
+                        aes_crypto = crypto.AESCrypto(self.device_id)
+                        self.key_types = json.loads(aes_crypto.decrypt(ciphertext))
+                        await self.device.set_key_types(self.key_types)
+                    except Exception as e:
+                        logger.exception(e)
 
                     self.cc_id = await self.nc.subscribe(
                         f"pichayon.door_controller.{self.device_id}",
@@ -299,7 +302,7 @@ class DoorControllerServer:
                 # self.db_manager.initial_data_after_restart(data)
                 # logger.debug('Data was saved')
             except Exception as e:
-                logger.debug(e)
+                logger.exception(e)
 
             if not self.is_register:
                 await asyncio.sleep(1)
