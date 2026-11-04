@@ -158,7 +158,7 @@ class DoorControllerServer:
                 dbpath.unlink()
 
                 self.db_manager = database.Manager(self.settings, self.device_id)
-                await self.request_initial_data()
+                await self.request_initial_authorization()
 
                 continue
 
