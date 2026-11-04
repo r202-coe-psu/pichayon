@@ -12,13 +12,25 @@
 {%- endblock %}
 
 {% block content %}
-  <div class="alert mb-4">
-    <span>
-      <b>Description</b> {{ group.description }} <br>
-      <b>Create By</b> {{ group.creator }} <br>
-      <b>Create Date</b> {{ group.created_date }} <br>
-      <b>Update Date</b> {{ group.updated_date }}
-    </span>
+  <div class="bg-base-100 rounded-box shadow p-4 md:p-6 mb-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div>
+        <div class="text-xs uppercase opacity-60">Description</div>
+        <div class="font-medium">{{ group.description or '-' }}</div>
+      </div>
+      <div>
+        <div class="text-xs uppercase opacity-60">Created By</div>
+        <div class="font-medium">{{ group.creator.username }}</div>
+      </div>
+      <div>
+        <div class="text-xs uppercase opacity-60">Created Date</div>
+        <div class="font-medium">{{ group.created_date.ctime() }}</div>
+      </div>
+      <div>
+        <div class="text-xs uppercase opacity-60">Updated Date</div>
+        <div class="font-medium">{{ group.updated_date.ctime() }}</div>
+      </div>
+    </div>
   </div>
 
   <div class="bg-base-100 rounded-box shadow p-4 md:p-6 mb-4">
@@ -71,7 +83,7 @@
   </div>
   {% else %}
   <div class="alert alert-info">
-    <span>Don't have any user in group.</span>
+    <span>No users in this group yet.</span>
   </div>
   {% endif %}
 {% endblock %}

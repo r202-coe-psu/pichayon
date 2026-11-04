@@ -10,7 +10,9 @@
 {% if url_for('administration.history_logs.index') == request.path %}
   <span class="font-semibold">History Logs</span>
 {% else %}
-  History Logs Door: {{ door.name }}
+  <a href="{{ url_for('administration.history_logs.index') }}" class="link link-hover">History Logs</a>
+  <span class="opacity-50">/</span>
+  <span class="font-semibold">{{ door.name }}</span>
 {% endif %}
 {%- endblock %}
 
@@ -24,8 +26,8 @@
         <th>Door</th>
         <th>Action</th>
         <th>User</th>
-        <th>Type</th>
-        <th>Message</th>
+        <th>Via</th>
+        <th>Result</th>
       </tr>
     </thead>
     <tbody>
@@ -33,12 +35,6 @@
       <tr>
         <td>{{ log.log_date.ctime() }}</td>
         <td>{{ log.door.name }}</td>
-        <td>{{ log.action }}</td>
-        <td>
-          {% if log.user %}
-            {{ log.user.first_name }} ({{log.user.username}})
-          {% endif %}
-        </td>
         <td>
           {% if 'delete' == log.action %}
             <i class="fa-solid fa-rectangle-xmark text-error"></i>
@@ -51,27 +47,38 @@
           {% elif log.action in ['open-door', 'force-unlock'] %}
             <i class="fa-solid fa-door-open text-success"></i>
           {% endif %}
-
-          {% if log.details['type'] == 'rfid' %}
-            <i class="fa-solid fa-id-badge text-info"></i>
-          {% elif log.details['type'] == 'web' %}
-            <i class="fa-solid fa-globe text-info"></i>
-          {% elif log.details['type'] == 'switch' %}
-            <i class="fa-solid fa-hand-point-up text-info"></i>
+          {{ log.action | replace('-', ' ') | replace('_', ' ') | title }}
+        </td>
+        <td>
+          {% if log.user %}
+            {{ log.user.first_name }} ({{log.user.username}})
+          {% else %}
+            <span class="opacity-50">-</span>
           {% endif %}
         </td>
         <td>
-          {% if log.details['type'] == 'rfid' %}
-	    {% set rfid = log.details.get('rfid', '') %}
-	    {% if log.message == 'success' %}
-        {{ '*' * rfid[:-3] | length + rfid[-3:] }}
-      {% else %}
-		      {{ rfid }}
-	    {% endif %}
-          {% elif log.details['type'] == 'web' %}
-            {{ log.details.get('ip', '') }}
+          {% if log.details.get('type') == 'rfid' %}
+            <i class="fa-solid fa-id-badge text-info"></i> RFID
+          {% elif log.details.get('type') == 'web' %}
+            <i class="fa-solid fa-globe text-info"></i> Web
+          {% elif log.details.get('type') == 'switch' %}
+            <i class="fa-solid fa-hand-point-up text-info"></i> Switch
           {% endif %}
-          {{ log.message }}
+        </td>
+        <td>
+          <span class="badge {{ 'badge-success' if log.message == 'success' else 'badge-error' if log.message == 'denied' else 'badge-ghost' }}">{{ log.message | title if log.message else '-' }}</span>
+          {% if log.details.get('type') == 'rfid' %}
+            {% set rfid = log.details.get('rfid', '') %}
+            <span class="text-xs opacity-70">
+              {% if log.message == 'success' %}
+                {{ '*' * rfid[:-3] | length + rfid[-3:] }}
+              {% else %}
+                {{ rfid }}
+              {% endif %}
+            </span>
+          {% elif log.details.get('type') == 'web' %}
+            <span class="text-xs opacity-70">{{ log.details.get('ip', '') }}</span>
+          {% endif %}
         </td>
       </tr>
       {% endfor %}
@@ -80,7 +87,7 @@
   </div>
   {% else %}
   <div class="alert alert-info">
-    <span>Don't have any Logs.</span>
+    <span>No history logs yet.</span>
   </div>
   {% endif %}
 {% endblock %}

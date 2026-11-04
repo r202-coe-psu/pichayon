@@ -4,6 +4,7 @@ import json
 import datetime
 import os
 import time
+import pathlib
 import logging
 import RPi.GPIO as GPIO
 
@@ -82,34 +83,37 @@ class DoorControllerServer:
         while self.running:
             data = await self.controller_command_queue.get()
 
-            logger.debug(f"process command -> {data}")
-            if "action" not in data:
-                logger.debug("action not found")
+            try:
+                logger.debug(f"process command -> {data}")
+                if "action" not in data:
+                    logger.debug("action not found")
 
-            if data["action"] == "open-door":
-                user = await self.db_manager.get_user_by_id_with_current_date(
-                    data["user_id"]
-                )
-                if user:
-                    await self.log_manager.put_log(
-                        user,
-                        type="web",
-                        action="open-door",
-                        message="success",
-                        ip=data.get("ip"),
+                if data["action"] == "open-door":
+                    user = await self.db_manager.get_user_by_id_with_current_date(
+                        data["user_id"]
                     )
-                    await self.device.open_door()
+                    if user:
+                        await self.log_manager.put_log(
+                            user,
+                            type="web",
+                            action="open-door",
+                            message="success",
+                            ip=data.get("ip"),
+                        )
+                        await self.device.open_door()
+                    else:
+                        await self.device.play_denied_access_sound()
+                        await self.log_manager.put_log(
+                            user, type="web", action="open-door", message="denied"
+                        )
+                        logger.debug(f"user not allow")
+
+                elif data["action"] in commands:
+                    await commands[data["action"]](data)
                 else:
-                    await self.device.play_denied_access_sound()
-                    await self.log_manager.put_log(
-                        user, type="web", action="open-door", message="denied"
-                    )
-                    logger.debug(f"user not allow")
-
-            elif data["action"] in commands:
-                await commands[data["action"]](data)
-            else:
-                logger.debug(f"command: {data['action']} not found")
+                    logger.debug(f"command: {data['action']} not found")
+            except Exception as e:
+                logger.exception(e)
 
             await asyncio.sleep(0.01)
 
@@ -137,14 +141,28 @@ class DoorControllerServer:
                 await asyncio.sleep(0.1)
                 continue
 
+            rfid_data = await self.rfid_queue.get()
+            logger.debug(f"rfid >>> {rfid_data['uid']}")
+            # user = await self.db_manager.get_user_by_rfid(rfid_number)
+            user = None
             try:
-                rfid_data = await self.rfid_queue.get()
-                logger.debug(f"rfid >>> {rfid_data['uid']}")
-                # user = await self.db_manager.get_user_by_rfid(rfid_number)
                 user = await self.db_manager.get_user_by_rfid_with_current_date(
                     rfid_data["uid"]
                 )
+            except Exception as e:
+                logger.exception(e)
 
+                # reset path
+                logger.debug("remove error path")
+                dbpath = pathlib.Path(self.settings["TINYDB_STORAGE_PATH"])
+                dbpath.unlink()
+
+                self.db_manager = database.Manager(self.settings, self.device_id)
+                await self.request_initial_data()
+
+                continue
+
+            try:
                 message = "success"
                 grant_access = await self.granting_access(user)
                 if user and grant_access:

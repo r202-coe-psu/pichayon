@@ -28,6 +28,12 @@ class Manager:
         self.db = None
         try:
             self.db = TinyDB(str(dbpath), storage=serialization)
+            # TinyDB only opens the file here; it doesn't parse the JSON until
+            # a table is actually read. Force that read now so a corrupted
+            # file (e.g. left behind by an ungraceful shutdown) is caught and
+            # repaired here, instead of surfacing later and killing whichever
+            # command happens to trigger the first real read.
+            self.db.tables()
         except Exception as e:
             logger.exception(e)
             p = pathlib.Path(dbpath)

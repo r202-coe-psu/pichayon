@@ -14,17 +14,33 @@
 
 {% block content %}
 <div class="bg-base-100 rounded-box shadow p-4 md:p-6">
-  <div class="space-y-1">
-    <div><b>Name</b> {{ door.name }}</div>
-    <div><b>Description</b> {{ door.description }}</div>
-    <div><b>Device ID</b> {{ door.device_id }}</div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
-      <b>Groups</b>
-      {% for group in door.groups %}
-        <a class="link" href="{{ url_for('administration.door_groups.view', door_group_id=group.id) }}">{{ group.name }}</a>
-      {% endfor %}
+      <div class="text-xs uppercase opacity-60">Name</div>
+      <div class="font-medium">{{ door.name }}</div>
     </div>
-    <div><b>Updated Date</b> {{ door.updatged_date }}</div>
+    <div>
+      <div class="text-xs uppercase opacity-60">Description</div>
+      <div class="font-medium">{{ door.description or '-' }}</div>
+    </div>
+    <div>
+      <div class="text-xs uppercase opacity-60">Device ID</div>
+      <div class="font-medium">{{ door.device_id }}</div>
+    </div>
+    <div>
+      <div class="text-xs uppercase opacity-60">Groups</div>
+      <div class="font-medium flex flex-wrap gap-2">
+        {% for group in door.groups %}
+          <a class="link" href="{{ url_for('administration.door_groups.view', door_group_id=group.id) }}">{{ group.name }}</a>
+        {% else %}
+          -
+        {% endfor %}
+      </div>
+    </div>
+    <div>
+      <div class="text-xs uppercase opacity-60">Updated Date</div>
+      <div class="font-medium">{{ door.updated_date.ctime() }}</div>
+    </div>
   </div>
 </div>
 {% endblock %}

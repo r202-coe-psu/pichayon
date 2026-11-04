@@ -1,3 +1,8 @@
+{% macro nav_link(endpoint, icon, label, blueprint=none) -%}
+{%- set is_active = (blueprint and request.blueprint == blueprint) or url_for(endpoint) == request.path -%}
+<li><a href="{{ url_for(endpoint) }}" class="{{ 'active' if is_active }}"><i class="fa-solid {{ icon }} w-5"></i>{{ label }}</a></li>
+{%- endmacro %}
+
 <li class="mb-2">
   <a href="{{ url_for('accounts.index') }}" class="flex items-center gap-3">
   {%- if current_user.get_image() %}
@@ -14,22 +19,22 @@
   </a>
 </li>
 
-<li><a href="{{ url_for('dashboard.index') }}"><i class="fa-solid fa-gauge-high w-5"></i>Dashboard</a></li>
+{{ nav_link('dashboard.index', 'fa-gauge-high', 'Dashboard') }}
 
 {% if current_user.has_roles('lecturer') %}
-<li><a href="{{ url_for('applications.approve') }}"><i class="fa-solid fa-list-check w-5"></i>Applications Approval</a></li>
+{{ nav_link('applications.approve', 'fa-list-check', 'Applications Approval') }}
 {% endif %}
 
 {% if current_user.has_roles('admin') %}
-  <li><a href="{{ url_for('administration.doors.index') }}"><i class="fa-solid fa-door-closed w-5"></i>Door Manager</a></li>
-  <li><a href="{{ url_for('administration.door_groups.index') }}"><i class="fa-solid fa-landmark w-5"></i>Door Groups</a></li>
-  <li><a href="{{ url_for('administration.user_groups.index') }}"><i class="fa-solid fa-user-group w-5"></i>User Groups</a></li>
-  <li><a href="{{ url_for('administration.authorizations.index') }}"><i class="fa-solid fa-user-shield w-5"></i>Authorization</a></li>
-  <li><a href="{{ url_for('administration.history_logs.index') }}"><i class="fa-solid fa-clock-rotate-left w-5"></i>History Log</a></li>
-  <li><a href="{{ url_for('administration.users.index') }}"><i class="fa-solid fa-users w-5"></i>Users</a></li>
-  <li><a href="{{ url_for('administration.applications.index') }}"><i class="fa-solid fa-list-check w-5"></i>Admin Applications Approval</a></li>
+  {{ nav_link('administration.doors.index', 'fa-door-closed', 'Door Manager', blueprint='administration.doors') }}
+  {{ nav_link('administration.door_groups.index', 'fa-landmark', 'Door Groups', blueprint='administration.door_groups') }}
+  {{ nav_link('administration.user_groups.index', 'fa-user-group', 'User Groups', blueprint='administration.user_groups') }}
+  {{ nav_link('administration.authorizations.index', 'fa-user-shield', 'Authorization', blueprint='administration.authorizations') }}
+  {{ nav_link('administration.history_logs.index', 'fa-clock-rotate-left', 'History Log', blueprint='administration.history_logs') }}
+  {{ nav_link('administration.users.index', 'fa-users', 'Users', blueprint='administration.users') }}
+  {{ nav_link('administration.applications.index', 'fa-list-check', 'Admin Applications Approval', blueprint='administration.applications') }}
 {% endif %}
 
-<li><a href="{{ url_for('applications.index') }}"><i class="fa-solid fa-address-card w-5"></i>Door Application</a></li>
-<li><a href="{{ url_for('accounts.index') }}"><i class="fa-solid fa-id-card w-5"></i>Account</a></li>
+{{ nav_link('applications.index', 'fa-address-card', 'Door Application') }}
+{{ nav_link('accounts.index', 'fa-id-card', 'Account') }}
 <li><a href="{{ url_for('accounts.logout') }}"><i class="fa-solid fa-right-from-bracket w-5"></i>Logout</a></li>

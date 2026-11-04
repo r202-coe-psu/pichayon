@@ -34,9 +34,9 @@
     <tbody>
       {% for member in members %}
       <tr>
-        <td>{{ member.name }}</td>
+        <td><a class="link" href="{{ url_for('administration.doors.view', door_id=member.id) }}">{{ member.name }}</a></td>
         <td>{{ member.device_type.title() }}</td>
-        <td>{{ member.status }}</td>
+        <td><span class="badge {{ 'badge-success' if member.status == 'active' else 'badge-error' }}">{{ member.status | title }}</span></td>
         <td>
           <a href="{{ url_for('administration.door_groups.delete_door', door_group_id=door_group.id, door_id=member.id) }}" class="btn btn-circle btn-sm btn-error"><i class="fa-solid fa-trash"></i></a>
         </td>
