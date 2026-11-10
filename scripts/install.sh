@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 echo "install package"
-sudo apt install -y rustc libssl-dev libffi-dev python3 python3-venv python3-dev git
+sudo apt install -y rustc libssl-dev libffi-dev python3 python3-venv python3-dev git swig liblgpio-dev
 
 if [ ! -d /home/$USER/pichayon ]
 then
