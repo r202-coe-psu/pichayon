@@ -34,6 +34,8 @@ class RS485Reader(readers.Reader):
         self.raw_data = []
         self.tag = []
         self.serial = None
+        self.reader = None
+        self.writer = None
 
         self.read_header = [0x55, 0xAA, 0x00]  # header 0x55 0xAA command word 0x00
 
@@ -48,8 +50,32 @@ class RS485Reader(readers.Reader):
         byte_command = b"".join(
             [d.to_bytes(1, "big") for d in turn_off_swiping_light_command]
         )
-        self.writer.write(byte_command)
-        await self.writer.drain()
+        await self.write(byte_command)
+
+    async def ensure_connected(self):
+        if self.writer is not None and not self.writer.is_closing():
+            return True
+
+        logger.warning(f"RFID serial {self.device} not connected, reconnecting")
+        try:
+            await self.connect()
+        except Exception as e:
+            logger.error(f"Cannot connect RFID serial {self.device}: {e}")
+            self.reader = self.writer = None
+            return False
+        return True
+
+    async def write(self, byte_command):
+        if not await self.ensure_connected():
+            return False
+        try:
+            self.writer.write(byte_command)
+            await self.writer.drain()
+        except Exception as e:
+            logger.error(f"RFID serial write failed: {e}")
+            self.writer = None
+            return False
+        return True
 
     async def play_success_action(self, seconds=1, times=1):
         # command = [0x55, 0xAA, 0x04, 0x01, 0x00]
@@ -68,14 +94,11 @@ class RS485Reader(readers.Reader):
         byte_command = b"".join([d.to_bytes(1, "big") for d in command])
 
         await asyncio.sleep(0.3)
-        self.writer.write(byte_command)
-        await self.writer.drain()
+        await self.write(byte_command)
         await asyncio.sleep(0.05)
-        self.writer.write(byte_command)
-        await self.writer.drain()
+        await self.write(byte_command)
         await asyncio.sleep(0.05)
-        self.writer.write(byte_command)
-        await self.writer.drain()
+        await self.write(byte_command)
 
     async def play_denied_action(self, seconds=1, times=1):
         command = [0x55, 0xAA, 0x04, 0x01, 0x00]
@@ -94,15 +117,17 @@ class RS485Reader(readers.Reader):
         byte_command = b"".join([d.to_bytes(1, "big") for d in command])
 
         await asyncio.sleep(0.3)
-        self.writer.write(byte_command)
-        await self.writer.drain()
+        await self.write(byte_command)
         await asyncio.sleep(0.2)
-        self.writer.write(byte_command)
-        await self.writer.drain()
+        await self.write(byte_command)
 
     async def wait_for_tag(self):
         while self.running:
             data = await self.reader.read(1)
+            if not data:
+                logger.error(f"RFID serial {self.device} closed")
+                self.writer = None
+                return
             await self.read_queue.put(ord(data))
             # await asyncio.sleep(0)
 
@@ -215,15 +240,13 @@ class RS485Reader(readers.Reader):
         byte_command = b"".join(
             [d.to_bytes(1, "big") for d in self.get_command_read_sector0()]
         )
-        self.writer.write(byte_command)
-        await self.writer.drain()
+        await self.write(byte_command)
 
     async def read_default_sector0(self):
         byte_command = b"".join(
             [d.to_bytes(1, "big") for d in self.get_command_read_default_sector0()]
         )
-        self.writer.write(byte_command)
-        await self.writer.drain()
+        await self.write(byte_command)
 
     async def get_tag(self):
         tag = await self.tag_queue.get()

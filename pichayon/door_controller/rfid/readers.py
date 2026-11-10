@@ -22,8 +22,13 @@ class Reader:
         self.running = False
         self.read_queue = asyncio.Queue()
         self.tag_queue = asyncio.Queue()
+        self.read_task = None
+        self.tag_verify_task = None
 
     async def connect(self):
+        for task in (self.read_task, self.tag_verify_task):
+            if task and not task.done():
+                task.cancel()
 
         self.running = True
 
