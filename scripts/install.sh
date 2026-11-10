@@ -9,7 +9,7 @@ then
 else
     echo "pichayon not found"
     echo "cloning pichayon project virtual env"
-    git -C /home/$USER clone https://gitlab.com/r202-coe-psu/pichayon.git
+    git -C /home/$USER clone https://github.com/r202-coe-psu/pichayon.git
 fi
 
 if [ ! -d venv ]
